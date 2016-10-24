@@ -1,0 +1,6 @@
+.idea
+__pycache__
+app/static/media/*
+!app/static/media/Peter\ And\ The\ Wolf.ogg
+!app/static/media/Popeye\ For\ President.mp4
+app/templates/menu.html
