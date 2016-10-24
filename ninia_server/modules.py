@@ -125,7 +125,7 @@ def gen_menu():
         menu_file.write(
             '<a href="http://0.0.0.0:5000/play/' + menu_audio[i][1:] + '">' +
             menu_audio[i][1:] + '</a>')
-        # [1:] removes the / which is needed in the scan but no longer needed
+        # [1:] removes the / which is needed was the scan but no longer needed
         menu_file.write("<br>")
     # writes video section
     menu_file.write("<h2>Video:</h2>")

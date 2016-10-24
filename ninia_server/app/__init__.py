@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from flask import Flask, render_template, send_from_directory
+
 from modules import *
 
 app = Flask(__name__)
@@ -26,10 +27,12 @@ def index():
 @app.route('/favicon.ico')
 def favicon():
     return send_from_directory(os.path.join(app.root_path, 'static'),
-                               'favicon.ico', mimetype='image/vnd.microsoft.icon')
+                               'favicon.ico',
+                               mimetype='image/vnd.microsoft.icon')
 
 
 # plays media, allows to input file in url
+# TODO - Doesn't allow to open files in subfolders
 @app.route("/play/<string:file>")
 def open_media(file):
     global media
@@ -43,7 +46,8 @@ def open_media(file):
 
 
 # create the media stream
-@app.route("/media_feed")  # TODO Fix - opens wrong file when two threads are launch simultaneously
+@app.route(
+    "/media_feed")  # TODO Fix - opens wrong file when two threads are launch simultaneously
 def media_feed():
     global media
     return send_from_directory(os.path.join(app.root_path, 'static/media'),
