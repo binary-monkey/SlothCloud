@@ -4,7 +4,12 @@
 import os
 import json
 
-
+# returns a list containing a json-structured representation of subsequent
+# dirs and files
+"""
+todo:
+  take path passed as parameter as reference
+"""
 def get_index():
 
     scheme = {
