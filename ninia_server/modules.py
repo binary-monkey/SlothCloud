@@ -12,17 +12,12 @@ def get_scheme(path):
     :param path: root directory to scan
     :return: dictionary in json format
     """
-    scheme = {
-        "folders": [],
-        "files": []
-    }
-    for x in os.listdir(path):
-        if os.path.isdir(path + "/" + x):
-            scheme["folders"].append({x: get_scheme(path + "/" + x)})
-        else:
-            scheme["files"].append(x)
 
-    return scheme
+    return {
+        "folders": [{x: get_scheme(path + "/" + x)} for x in os.listdir(path)
+                    if os.path.isdir(path + "/" + x)],
+        "files": [x for x in os.listdir(path) if not os.path.isdir(path + "/" + x)]
+    }
 
 
 def scan_scheme(path=""):
@@ -117,7 +112,8 @@ def gen_menu():
         """<!DOCTYPE html><html lang="en">
         <head><meta charset="UTF-8">
         <title>PyMediaServer - Menu</title>
-        </head><body><h1>PyMediaServer (in-dev) - Menu</h1>""")
+        </head>
+        <body><h1>PyMediaServer (in-dev) - Menu</h1>""")
 
     # writes audio sectiom
     menu_file.write("<h2>Audio:</h2>")
@@ -144,5 +140,6 @@ if __name__ == "__main__":
         print(json.dumps(json.loads(get_index(path), encoding="utf-8"),
                          ensure_ascii=False, indent=4, sort_keys=True))
 
-    # test_index()
+
+    test_index()
     # gen_menu()
