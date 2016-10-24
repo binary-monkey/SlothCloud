@@ -69,7 +69,7 @@ def get_index(path=""):
     if not path:
         path = os.path.dirname(os.path.abspath(__file__))
 
-    return json.dumps(get_scheme(path), ensure_ascii=False,
+    return json.dumps({path: get_scheme(path)}, ensure_ascii=False,
                       indent=4, sort_keys=True)
 
 
@@ -144,5 +144,5 @@ if __name__ == "__main__":
         print(json.dumps(json.loads(get_index(path), encoding="utf-8"),
                          ensure_ascii=False, indent=4, sort_keys=True))
 
-
-    gen_menu()
+    # test_index()
+    # gen_menu()
