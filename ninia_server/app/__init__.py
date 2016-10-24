@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from flask import Flask, render_template, send_from_directory
-from modules import *
+from ninia_server.modules import *
 
 app = Flask(__name__)
 

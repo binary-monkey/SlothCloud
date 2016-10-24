@@ -8,7 +8,7 @@ import json
 Returns json file containing the files and directories subsequent to the path
 passed as a parameter. Each folder has a list containing everything in of it.
 
-:param path: optional, default=/app/root/static/media/
+:param path: optional, default=/ninia_server/app/root/static/media/
 """
 
 def get_index(path=""):
@@ -48,9 +48,9 @@ Returns mimetype of the file given as a parameter
 
 def get_type(file):
     # Generate dictionaries
-    with open('app/dictionaries/audio_dict.json', 'r') as fp:
+    with open('ninia_server/app/dictionaries/audio_dict.json', 'r') as fp:
         audio_dict = json.load(fp)
-    with open('app/dictionaries/video_dict.json', 'r') as fp:
+    with open('ninia_server/app/dictionaries/video_dict.json', 'r') as fp:
         video_dict = json.load(fp)
 
     filename, extension = file.split(".")
@@ -68,7 +68,7 @@ Autogenerates a menu with the media files stored in app/static/media/
 """
 
 def gen_menu():
-    menu_entries = os.listdir("app/static/media")
+    menu_entries = os.listdir("ninia_server/app/static/media")
     menu_audio = []
     menu_video = []
 
@@ -78,7 +78,7 @@ def gen_menu():
         if "video" in get_type(menu_entries[i]):
             menu_video.append(menu_entries[i])
 
-    menu_file = open("app/templates/menu.html", "w")
+    menu_file = open("ninia_server/app/templates/menu.html", "w")
 
     # writes beginning section
     menu_file.write("""<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><title>PyMediaServer - Menu</title>
