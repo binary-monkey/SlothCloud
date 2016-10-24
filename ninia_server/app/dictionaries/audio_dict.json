@@ -1,1 +1,5 @@
-{"mp3": "mpeg", "ogg": "ogg", "wav": "wav"}
+{
+  "mp3": "mpeg",
+  "ogg": "ogg",
+  "wav": "wav"
+}
