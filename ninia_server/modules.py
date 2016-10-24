@@ -24,8 +24,8 @@ def get_index(path=""):
         # returns the path to the current file
         # multiple variables are just for better understanding
         root_path = os.path.dirname(os.path.abspath(__file__))
-        static_path = root_path + "/app/static/media/"
-        path = static_path
+        media_path = root_path + "/app/static/media/"
+        path = media_path
     else:
         scheme = {}
 
@@ -47,10 +47,14 @@ Returns mimetype of the file given as a parameter
 """
 
 def get_type(file):
+
+    root_path = os.path.dirname(os.path.abspath(__file__))
+    dict_path = root_path + "/app/dictionaries/"
+
     # Generate dictionaries
-    with open('ninia_server/app/dictionaries/audio_dict.json', 'r') as fp:
+    with open(dict_path + 'audio_dict.json', 'r') as fp:
         audio_dict = json.load(fp)
-    with open('ninia_server/app/dictionaries/video_dict.json', 'r') as fp:
+    with open(dict_path + 'video_dict.json', 'r') as fp:
         video_dict = json.load(fp)
 
     filename, extension = file.split(".")
@@ -68,7 +72,9 @@ Autogenerates a menu with the media files stored in app/static/media/
 """
 
 def gen_menu():
-    menu_entries = os.listdir("ninia_server/app/static/media")
+    root_path = os.path.dirname(os.path.abspath(__file__))
+    static_path = root_path + "/app/"
+    menu_entries = os.listdir(static_path + "static/media/")
     menu_audio = []
     menu_video = []
 
@@ -78,7 +84,7 @@ def gen_menu():
         if "video" in get_type(menu_entries[i]):
             menu_video.append(menu_entries[i])
 
-    menu_file = open("ninia_server/app/templates/menu.html", "w")
+    menu_file = open(static_path + "templates/menu.html", "w")
 
     # writes beginning section
     menu_file.write("""<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><title>PyMediaServer - Menu</title>

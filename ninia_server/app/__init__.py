@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from flask import Flask, render_template, send_from_directory
-from ninia_server.modules import *
+from modules import *
 
 app = Flask(__name__)
 
@@ -17,7 +17,7 @@ def menu():
 
 
 # root directory
-@app.route("/index")
+@app.route("/index.json")
 def index():
     return get_index()
 
