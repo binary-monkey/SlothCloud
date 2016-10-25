@@ -14,8 +14,8 @@ def get_scheme(path):
     """
 
     return {
-        "folders": [{x: get_scheme(path + "/" + x)} for x in os.listdir(path)
-                    if os.path.isdir(path + "/" + x)],
+        "folders": {x: get_scheme(path + "/" + x) for x in os.listdir(path)
+                    if os.path.isdir(path + "/" + x)},
         "files": [x for x in os.listdir(path) if
                   not os.path.isdir(path + "/" + x)]
     }
@@ -144,5 +144,5 @@ if __name__ == "__main__":
     def test_index(path=""):
         print(json.dumps(json.loads(get_index(path), encoding="utf-8"),
                          ensure_ascii=False, indent=4, sort_keys=True))
-        # test_index()
-        # gen_menu()
+    # test_index()
+    # gen_menu()
