@@ -116,23 +116,28 @@ def gen_menu():
     menu_file.write(
         """<!DOCTYPE html><html lang="en">
         <head><meta charset="UTF-8">
-        <title>PyMediaServer - Menu</title>
-        </head><body><h1>PyMediaServer (in-dev) - Menu</h1>""")
+        <title>Ninia - Menu</title>
+        </head><body><h1>Ninia (in-dev) - Menu</h1>""")
 
     # writes audio sectiom
     menu_file.write("<h2>Audio:</h2>")
     for i in range(len(menu_audio)):
+        # removes 1st / and changes / to | in order to avoid errors
+        entry = menu_audio[i][1:].replace("/", "|")
+
         menu_file.write(
-            '<a href="http://0.0.0.0:5000/play/' + menu_audio[i][1:] + '">' +
-            menu_audio[i][1:] + '</a>')
-        # [1:] removes the / which is needed was the scan but no longer needed
+            '<a href="http://0.0.0.0:5000/play/' + entry + '">' +
+            menu_audio[i] + '</a>')
         menu_file.write("<br>")
     # writes video section
     menu_file.write("<h2>Video:</h2>")
     for i in range(len(menu_video)):
+        # removes 1st / and changes / to | in order to avoid errors
+        entry = menu_video[i][1:].replace("/", "|")
+
         menu_file.write(
-            '<a href="http://0.0.0.0:5000/play/' + menu_video[i][1:] + '">' +
-            menu_video[i][1:] + '</a>')
+            '<a href="http://0.0.0.0:5000/play/' + entry + '">' +
+            menu_video[i] + '</a>')
         menu_file.write("<br>")
     # writes end section
     menu_file.write("</body></html>")
@@ -144,5 +149,5 @@ if __name__ == "__main__":
         print(json.dumps(json.loads(get_index(path), encoding="utf-8"),
                          ensure_ascii=False, indent=4, sort_keys=True))
 
-    # test_index()
-    # gen_menu()
+        # test_index()
+        # gen_menu()

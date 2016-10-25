@@ -32,11 +32,10 @@ def favicon():
 
 
 # plays media, allows to input file in url
-# TODO - Doesn't allow to open files in subfolders
 @app.route("/play/<string:file>")
 def open_media(file):
     global media
-    media = file
+    media = file.replace("|", "/")
 
     # check the type of media
     if "audio" in get_type(media):  # if it is audio
@@ -46,8 +45,7 @@ def open_media(file):
 
 
 # create the media stream
-@app.route(
-    "/media_feed")  # TODO Fix - opens wrong file when two threads are launch simultaneously
+@app.route("/media_feed")
 def media_feed():
     global media
     return send_from_directory(os.path.join(app.root_path, 'static/media'),
@@ -57,8 +55,9 @@ def media_feed():
 # return media feed without interface from, allows to input file in url
 @app.route("/media_feed/<string:file>")
 def return_feed(file):
+    media = file.replace("|", "/")
     return send_from_directory(os.path.join(app.root_path, 'static/media'),
-                               file, mimetype=get_type(media))
+                               media, mimetype=get_type(media))
 
 
 if __name__ == "__main__":
