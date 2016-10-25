@@ -71,8 +71,8 @@ def get_index(path=""):
         # path = os.path.dirname(os.path.abspath(__file__))
         path = os.path.dirname(os.path.abspath(__file__)) + "/app/static/media"
 
-        with open('app/config/permissions.json') as permission_file:
-            permitted_dirs = json.load(permission_file)["directories"]["index"]
+    with open('app/config/permissions.json') as permission_file:
+        permitted_dirs = json.load(permission_file)["directories"]["index"]
 
     return json.dumps({path: get_scheme(path, permitted_dirs=permitted_dirs)},
                       ensure_ascii=False, indent=4, sort_keys=True)
