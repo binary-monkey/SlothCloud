@@ -38,7 +38,7 @@ def scan_scheme(path=""):
     audio_entries = []
     video_entries = []
 
-    scheme = get_scheme(app_path + "static/media/" + path)
+    scheme = get_scheme(app_path + "static/media/" + path, restricted=False)
 
     for i in range(len(scheme["files"])):
 
