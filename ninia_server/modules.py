@@ -69,18 +69,13 @@ def get_index(path=""):
 
     if not path:
         # path = os.path.dirname(os.path.abspath(__file__))
-        path = os.path.dirname(os.path.abspath(__file__)) + "/app/static"
+        path = os.path.dirname(os.path.abspath(__file__)) + "/app/static/media"
 
         with open('app/config/permissions.json') as permission_file:
             permitted_dirs = json.load(permission_file)["directories"]["index"]
 
-        for directory in permitted_dirs:
-            if directory in path:
-                restricted = False
-
-    return json.dumps({}) if restricted else json.dumps(
-        {path: get_scheme(path, permitted_dirs=permitted_dirs)},
-        ensure_ascii=False, indent=4, sort_keys=True)
+    return json.dumps({path: get_scheme(path, permitted_dirs=permitted_dirs)},
+                      ensure_ascii=False, indent=4, sort_keys=True)
 
 
 def get_type(file):
