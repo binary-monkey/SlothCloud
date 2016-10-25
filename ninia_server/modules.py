@@ -5,20 +5,26 @@ import json
 import os
 
 
-def get_scheme(path):
+def get_scheme(path, restricted=True, permitted_dirs=[]):
     """
     Recursively scans directories and returns a dictionary containing a list
     of files and directories in path
     :param path: root directory to scan
+    :param restricted: If it only checks permitted dirs
+    :param permitted_dirs: list of permitted directories
     :return: dictionary in json format
     """
+    if restricted:
+        for directory in permitted_dirs:
+            if directory in path:
+                restricted = False
 
     return {
-        "folders": {x: get_scheme(path + "/" + x) for x in os.listdir(path)
-                    if os.path.isdir(path + "/" + x)},
+        "folders": {x: get_scheme(path + "/" + x, restricted, permitted_dirs)
+                    for x in os.listdir(path) if os.path.isdir(path + "/" + x)},
         "files": [x for x in os.listdir(path) if
                   not os.path.isdir(path + "/" + x)]
-    }
+    } if not restricted else {}
 
 
 def scan_scheme(path=""):
@@ -54,11 +60,10 @@ def scan_scheme(path=""):
 
 
 # todo: optimize restriction check
-def get_index(path="", restricted=True):
+def get_index(path=""):
     """
     Returns json file containing the files and directories subsequent to the path
     passed as a parameter. Each folder has a list containing everything in of it.
-    :param restricted: If it only checks permitted dirs
     :param path: optional, default=root
     """
 
@@ -66,7 +71,6 @@ def get_index(path="", restricted=True):
         # path = os.path.dirname(os.path.abspath(__file__))
         path = os.path.dirname(os.path.abspath(__file__)) + "/app/static"
 
-    if restricted:
         with open('app/config/permissions.json') as permission_file:
             permitted_dirs = json.load(permission_file)["directories"]["index"]
 
@@ -75,8 +79,8 @@ def get_index(path="", restricted=True):
                 restricted = False
 
     return json.dumps({}) if restricted else json.dumps(
-        {path: get_scheme(path)}, ensure_ascii=False,
-        indent=4, sort_keys=True)
+        {path: get_scheme(path, permitted_dirs=permitted_dirs)},
+        ensure_ascii=False, indent=4, sort_keys=True)
 
 
 def get_type(file):
@@ -154,5 +158,5 @@ if __name__ == "__main__":
     def test_index(path=""):
         print(json.dumps(json.loads(get_index(path), encoding="utf-8"),
                          ensure_ascii=False, indent=4, sort_keys=True))
-    test_index()
+    # test_index()
     # gen_menu()
