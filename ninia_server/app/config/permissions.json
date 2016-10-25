@@ -1,3 +1,5 @@
 {
-  "ninia_server/static"
+  "directories" : {
+    "index": ["ninia_server/app/static"]
+  }
 }
