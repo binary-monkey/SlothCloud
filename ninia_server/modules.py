@@ -105,7 +105,8 @@ def get_type(file):
         return ""
 
 
-def gen_menu():
+# stays for review, use gen_menu instead
+def gen_menu_file():
     """
     Autogenerates a menu with the media files stored in app/static/media/
     """
@@ -136,6 +137,35 @@ def gen_menu():
     # writes end section
     menu_file.write("</body></html>")
 
+
+def gen_menu():
+    """
+    Autogenerates a menu with the media files stored in app/static/media/
+    """
+    global host, port
+
+    menu_entries = scan_scheme()
+
+    # menu_file variable will be the html file.
+    # writes beginning section
+    menu_file = """
+        <!DOCTYPE html><html lang="en">
+        <head><meta charset="UTF-8">
+        <title>Ninia - Menu</title>
+        </head><body><h1>Ninia (in-dev) - Menu</h1>"""
+
+    for category in menu_entries:
+        # Category name, first letter is upper
+        menu_file += "\n<h2>" + category[0].upper() + category[1:] + "</h2>"
+        # List of all entries in category
+        for entry in menu_entries[category]:
+            entry = entry[1:].replace("/", "|")
+            menu_file += '\n<a href="http://' + host + ':' + port + '/play/' + \
+                         entry + '">' + entry.replace("|", "/") + '</a>'
+            menu_file += "<br>"
+
+    # writes end section
+    menu_file += "</body></html>"
 
 if __name__ == "__main__":
     # Test get_index() by printing the returned json of the root folder
