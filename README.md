@@ -15,7 +15,7 @@ Ninia is a web-based media server made using Flask for Python3
 *   Flask for Python3 [Flask.pocoo.org](http://flask.pocoo.org/)
 
 ## Useful Information
-I checked it Raspbian and other Debian-based distros, no love for MacOS or Windows sorry :(
+I checked it in Raspbian and other Debian-based distros, no love for MacOS or Windows sorry :(
 
 All preview files have been downloaded from [Internet Archive](https://archive.org) and fall under Public Domain
 
