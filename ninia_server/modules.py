@@ -37,7 +37,6 @@ def scan_scheme(path="", video_entries=[], audio_entries=[]):
 
     scheme = get_scheme(app_path + "static/media" + path, restricted=False)
 
-    print(scheme)
     for file in scheme["files"]:
         if "audio" in get_type(file):
             audio_entries.append(path + "/" + file)
@@ -102,14 +101,11 @@ def gen_menu():
     """
     Autogenerates a menu with the media files stored in app/static/media/
     """
-
+    host = "localhost"
+    port = "5000"
     app_path = os.path.dirname(os.path.abspath(__file__)) + "/app/"
 
     menu_entries = scan_scheme()
-
-    menu_audio = menu_entries.get("audio")
-    menu_video = menu_entries.get("video")
-
     menu_file = open(app_path + "templates/menu.html", "w")
 
     # writes beginning section
@@ -121,23 +117,26 @@ def gen_menu():
 
     # writes audio sectiom
     menu_file.write("<h2>Audio:</h2>")
-    for i in range(len(menu_audio)):
+
+    for audio_path in menu_entries["audio"]:
         # removes 1st / and changes / to | in order to avoid errors
-        entry = menu_audio[i][1:].replace("/", "|")
+        entry = audio_path[1:].replace("/", "|")
 
         menu_file.write(
-            '<a href="http://0.0.0.0:5000/play/' + entry + '">' +
-            menu_audio[i] + '</a>')
+            '<a href="http://' + host + port + '/play/' + entry + '">' +
+            audio_path + '</a>')
         menu_file.write("<br>")
     # writes video section
     menu_file.write("<h2>Video:</h2>")
-    for i in range(len(menu_video)):
+
+    for video_path in menu_entries["video"]:
+
         # removes 1st / and changes / to | in order to avoid errors
-        entry = menu_video[i][1:].replace("/", "|")
+        entry = video_path[1:].replace("/", "|")
 
         menu_file.write(
-            '<a href="http://0.0.0.0:5000/play/' + entry + '">' +
-            menu_video[i] + '</a>')
+            '<a href="http://' + host + port + '/play/' + entry + '">' +
+            video_path + '</a>')
         menu_file.write("<br>")
     # writes end section
     menu_file.write("</body></html>")
