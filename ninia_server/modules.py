@@ -125,7 +125,7 @@ def gen_menu():
         entry = audio_path[1:].replace("/", "|")
 
         menu_file.write(
-            '<a href="http://' + host + port + '/play/' + entry + '">' +
+            '<a href="http://' + host + ':' + port + '/play/' + entry + '">' +
             audio_path + '</a>')
         menu_file.write("<br>")
     # writes video section
@@ -137,7 +137,7 @@ def gen_menu():
         entry = video_path[1:].replace("/", "|")
 
         menu_file.write(
-            '<a href="http://' + host + port + '/play/' + entry + '">' +
+            '<a href="http://' + host + ':' + port + '/play/' + entry + '">' +
             video_path + '</a>')
         menu_file.write("<br>")
     # writes end section
