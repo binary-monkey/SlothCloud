@@ -4,6 +4,12 @@
 import json
 import os
 
+# <definition of global variables>
+abspath = os.path.dirname(os.path.abspath(__file__))
+host = "localhost"
+port = "port"
+# </definition of global variables>
+
 
 def get_scheme(path, restricted=True, permitted_dirs=[]):
     """
@@ -27,6 +33,7 @@ def get_scheme(path, restricted=True, permitted_dirs=[]):
     } if not restricted else {}
 
 
+# todo: scans the same directory multiple times. Find reason and fix.
 def scan_scheme(path="", video_entries=[], audio_entries=[]):
     """
     Scans scheme for files dividing them into categories
@@ -35,21 +42,22 @@ def scan_scheme(path="", video_entries=[], audio_entries=[]):
     :param audio_entries: audio entries in previous folders
     :return: dictionary with audio and video files dictionaries
     """
-    app_path = os.path.dirname(os.path.abspath(__file__)) + "/app/"
-
+    app_path = abspath + "/app/"
     scheme = get_scheme(app_path + "static/media" + path, restricted=False)
-
-    for file in scheme["files"]:
-        if "audio" in get_type(file):
-            audio_entries.append(path + "/" + file)
-        elif "video" in get_type(file):
-            video_entries.append(path + "/" + file)
 
     for folder in scheme["folders"]:
         audio_entries = scan_scheme(path + "/" + folder,
                                     audio_entries=audio_entries)["audio"]
         video_entries = scan_scheme(path + "/" + folder,
                                     video_entries=video_entries)["video"]
+
+    for file in scheme["files"]:
+        if "audio" in get_type(file):
+            if not path + "/" + file in audio_entries:
+                audio_entries.append(path + "/" + file)
+        elif "video" in get_type(file):
+            if not path + "/" + file in video_entries:
+                video_entries.append(path + "/" + file)
 
     return {"audio": audio_entries, "video": video_entries}
 
@@ -63,8 +71,7 @@ def get_index(path=""):
     """
 
     if not path:
-        # path = os.path.dirname(os.path.abspath(__file__))
-        path = os.path.dirname(os.path.abspath(__file__)) + "/app/static/media"
+        path = abspath + "/app/static/media"
 
     with open('app/config/permissions.json') as permission_file:
         permitted_dirs = json.load(permission_file)["directories"]["index"]
@@ -79,8 +86,7 @@ def get_type(file):
     :param file
     """
 
-    dict_path = os.path.dirname(os.path.abspath(__file__)) \
-                + "/app/dictionaries/"
+    dict_path = abspath + "/app/dictionaries/"
 
     # Generate dictionaries
     with open(dict_path + 'audio_dict.json', 'r') as fp:
@@ -103,9 +109,8 @@ def gen_menu():
     """
     Autogenerates a menu with the media files stored in app/static/media/
     """
-    host = "localhost"
-    port = "5000"
-    app_path = os.path.dirname(os.path.abspath(__file__)) + "/app/"
+    global host, port
+    app_path = abspath + "/app/"
 
     menu_entries = scan_scheme()
     menu_file = open(app_path + "templates/menu.html", "w")
@@ -117,29 +122,17 @@ def gen_menu():
         <title>Ninia - Menu</title>
         </head><body><h1>Ninia (in-dev) - Menu</h1>""")
 
-    # writes audio sectiom
-    menu_file.write("<h2>Audio:</h2>")
+    for category in menu_entries:
+        # Category name, first letter is upper
+        menu_file.write("\n<h2>" + category[0].upper() + category[1:] + "</h2>")
+        # List of all entries in category
+        for entry in menu_entries[category]:
+            entry = entry[1:].replace("/", "|")
+            menu_file.write(
+                '\n<a href="http://' + host + ':' + port + '/play/' + entry +
+                '">' + entry.replace("|", "/") + '</a>')
+            menu_file.write("<br>")
 
-    for audio_path in menu_entries["audio"]:
-        # removes 1st / and changes / to | in order to avoid errors
-        entry = audio_path[1:].replace("/", "|")
-
-        menu_file.write(
-            '<a href="http://' + host + ':' + port + '/play/' + entry + '">' +
-            audio_path + '</a>')
-        menu_file.write("<br>")
-    # writes video section
-    menu_file.write("<h2>Video:</h2>")
-
-    for video_path in menu_entries["video"]:
-
-        # removes 1st / and changes / to | in order to avoid errors
-        entry = video_path[1:].replace("/", "|")
-
-        menu_file.write(
-            '<a href="http://' + host + ':' + port + '/play/' + entry + '">' +
-            video_path + '</a>')
-        menu_file.write("<br>")
     # writes end section
     menu_file.write("</body></html>")
 
@@ -149,5 +142,5 @@ if __name__ == "__main__":
     def test_index(path=""):
         print(json.dumps(json.loads(get_index(path), encoding="utf-8"),
                          ensure_ascii=False, indent=4, sort_keys=True))
-    test_index()
+    # test_index()
     # gen_menu()
