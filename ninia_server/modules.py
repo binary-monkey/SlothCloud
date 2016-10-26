@@ -31,6 +31,8 @@ def scan_scheme(path="", video_entries=[], audio_entries=[]):
     """
     Scans scheme for files dividing them into categories
     :param path: root directory to scan
+    :param video_entries: video entries in previous folders
+    :param audio_entries: audio entries in previous folders
     :return: dictionary with audio and video files dictionaries
     """
     app_path = os.path.dirname(os.path.abspath(__file__)) + "/app/"
