@@ -45,8 +45,10 @@ def scan_scheme(path="", video_entries=[], audio_entries=[]):
             video_entries.append(path + "/" + file)
 
     for folder in scheme["folders"]:
-        audio_entries = scan_scheme(path + "/" + folder)["audio"]
-        video_entries = scan_scheme(path + "/" + folder)["video"]
+        audio_entries = scan_scheme(path + "/" + folder,
+                                    audio_entries=audio_entries)["audio"]
+        video_entries = scan_scheme(path + "/" + folder,
+                                    video_entries=video_entries)["video"]
 
     return {"audio": audio_entries, "video": video_entries}
 
