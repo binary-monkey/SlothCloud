@@ -11,7 +11,7 @@ Ninia is a web-based media server made using Flask for Python3
 *   More file types support
 
 ## Requirements
-*   Python 3 - ([Python.org])(https://www.python.org/downloads/)
+*   Python 3 - ( [Python.org] (https://www.python.org/downloads/)
 *   Flask for Python3 [Flask.pocoo.org](http://flask.pocoo.org/)
 
 ## Useful Information
