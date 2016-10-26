@@ -27,7 +27,7 @@ def get_scheme(path, restricted=True, permitted_dirs=[]):
     } if not restricted else {}
 
 
-def scan_scheme(path=""):
+def scan_scheme(path="", video_entries=[], audio_entries=[]):
     """
     Scans scheme for files dividing them into categories
     :param path: root directory to scan
@@ -35,26 +35,18 @@ def scan_scheme(path=""):
     """
     app_path = os.path.dirname(os.path.abspath(__file__)) + "/app/"
 
-    audio_entries = []
-    video_entries = []
+    scheme = get_scheme(app_path + "static/media" + path, restricted=False)
 
-    scheme = get_scheme(app_path + "static/media/" + path, restricted=False)
+    print(scheme)
+    for file in scheme["files"]:
+        if "audio" in get_type(file):
+            audio_entries.append(path + "/" + file)
+        elif "video" in get_type(file):
+            video_entries.append(path + "/" + file)
 
-    for i in range(len(scheme["files"])):
-
-        if "audio" in get_type(scheme["files"][i]):
-            audio_entries.append(path + "/" + scheme["files"][i])
-        if "video" in get_type(scheme["files"][i]):
-            video_entries.append(path + "/" + scheme["files"][i])
-
-    for j in range(len(scheme["folders"])):
-        for key in scheme["folders"][j]:
-            temp = scan_scheme(path + "/" + key)
-
-            for entry in temp.get("audio"):
-                audio_entries.append(entry)
-            for entry in temp.get("video"):
-                video_entries.append(entry)
+    for folder in scheme["folders"]:
+        audio_entries = scan_scheme(path + "/" + folder)["audio"]
+        video_entries = scan_scheme(path + "/" + folder)["video"]
 
     return {"audio": audio_entries, "video": video_entries}
 
@@ -93,7 +85,8 @@ def get_type(file):
     with open(dict_path + 'video_dict.json', 'r') as fp:
         video_dict = json.load(fp)
 
-    filename, extension = file.split(".")
+    # changed so it also works with files named f.e: script.bak.py
+    filename, extension = ''.join(file.split('.')[0:-1]), file.split('.')[-1]
 
     if extension in audio_dict:
         return "audio/" + audio_dict[extension]
@@ -153,5 +146,5 @@ if __name__ == "__main__":
     def test_index(path=""):
         print(json.dumps(json.loads(get_index(path), encoding="utf-8"),
                          ensure_ascii=False, indent=4, sort_keys=True))
-    # test_index()
+    test_index()
     # gen_menu()
