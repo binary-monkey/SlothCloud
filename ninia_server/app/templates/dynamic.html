@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<html>
+
+  <head>
+    <meta charset="UTF-8">
+  </head>
+
+  <body>
+
+    {% if ftype == "audio" %}
+      <p>Audio</p>
+      <audio src="{{ url_for('media_feed') }}" controls>
+    {% else %}
+
+      {% if ftype == "video" %}
+      <p>Video</p>
+      <video width="640" height="480" controls autoplay>
+          <source src="{{ url_for('media_feed') }}" type="video/mp4">
+      </video>
+      {% else %}
+
+        {% if ftype == "image" %}
+          <p>Image</p>
+          <img src="{{ url_for('media_feed') }}" style="width:128px;height:128px;">
+        {% else %}
+
+          <p> this format is not suported yet, sorry :/> </p>
+
+        {% endif %}
+      {% endif %}
+    {% endif %}
+  </body>
+</html>

@@ -44,7 +44,8 @@ def open_media(file):
 
     for file_type in file_formats:
         if file_type in get_type(media):
-            return render_template(file_type + ".html")
+            # return render_template(file_type + ".html")
+            return render_template("dynamic.html", ftype=file_type)
 
     return render_template("default.html")
 
