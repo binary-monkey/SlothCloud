@@ -122,11 +122,11 @@ def gen_menu():
         <title>Ninia - Menu</title>
         </head><body><h1>Ninia (in-dev) - Menu</h1>"""
 
-    for category in menu_entries:
+    for category in sorted(menu_entries.keys()):
         # Category name, first letter is upper
         menu_file += "\n<h2>" + category[0].upper() + category[1:] + "</h2>"
         # List of all entries in category
-        for entry in menu_entries[category]:
+        for entry in sorted(menu_entries[category]):
             entry = entry[1:].replace("/", "|")
             menu_file += '\n<a href="http://' + host + ':' + port + '/play/' + \
                          entry + '">' + entry.replace("|", "/") + '</a>'
