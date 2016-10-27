@@ -6,6 +6,7 @@ from flask import Flask, render_template, send_from_directory
 from modules import *
 
 app = Flask(__name__)
+abspath = os.path.dirname(os.path.abspath(__file__))
 
 media = ""
 
@@ -33,14 +34,18 @@ def favicon():
 # plays media, allows to input file in url
 @app.route("/play/<string:file>")
 def open_media(file):
-    global media
+
+    global abspath, media
+
     media = file.replace("|", "/")
 
-    # check the type of media
-    if "audio" in get_type(media):  # if it is audio
-        return render_template("audio_player.html")
-    if "video" in get_type(media):  # if it is video
-        return render_template("video_player.html")
+    with open(abspath + "/dictionaries/formats.json", "r") as format_file:
+        file_formats =  json.load(format_file)
+
+    for file_type in file_formats:
+        return render_template(file_type + ".html") if \
+            file_type in get_type(media) else \
+            render_template("default.html")
 
 
 # create the media stream

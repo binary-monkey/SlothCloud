@@ -34,32 +34,37 @@ def get_scheme(path, restricted=True, permitted_dirs=[]):
 
 
 # todo: scans the same directory multiple times. Find reason and fix.
-def scan_scheme(path="", video_entries=[], audio_entries=[]):
+def scan_scheme(path="", entries={}, file_types={}):
     """
     Scans scheme for files dividing them into categories
     :param path: root directory to scan
-    :param video_entries: video entries in previous folders
-    :param audio_entries: audio entries in previous folders
+    :param entries: a dict: keys are file types (audio, video) and val are lists
     :return: dictionary with audio and video files dictionaries
     """
     app_path = abspath + "/app/"
     scheme = get_scheme(app_path + "static/media" + path, restricted=False)
+    if not file_types:
+        with open("app/dictionaries/formats.json", "r") as format_file:
+            file_types = json.load(format_file)
 
     for folder in scheme["folders"]:
-        audio_entries = scan_scheme(path + "/" + folder,
-                                    audio_entries=audio_entries)["audio"]
-        video_entries = scan_scheme(path + "/" + folder,
-                                    video_entries=video_entries)["video"]
+        for file_type in file_types:
+            try:
+                entries = scan_scheme(path + "/" + folder,
+                                      entries=entries, file_types=file_types)
+            except KeyError as ke:
+                pass
 
-    for file in scheme["files"]:
-        if "audio" in get_type(file):
-            if not path + "/" + file in audio_entries:
-                audio_entries.append(path + "/" + file)
-        elif "video" in get_type(file):
-            if not path + "/" + file in video_entries:
-                video_entries.append(path + "/" + file)
-
-    return {"audio": audio_entries, "video": video_entries}
+    for file_type in file_types:
+        for file in scheme["files"]:
+            if file_type in get_type(file):
+                    try:
+                        if not path + "/" + file in entries[file_type]:
+                            # raise
+                            entries[file_type].append(path + "/" + file)
+                    except:
+                        entries[file_type] = [path + "/" + file]
+    return entries
 
 
 # todo: optimize restriction check
@@ -85,25 +90,20 @@ def get_type(file):
     Returns mimetype of the file given as a parameter
     :param file
     """
+    dict_path = abspath + "/app/dictionaries"
 
-    dict_path = abspath + "/app/dictionaries/"
-
-    # Generate dictionaries
-    with open(dict_path + 'audio_dict.json', 'r') as fp:
-        audio_dict = json.load(fp)
-    with open(dict_path + 'video_dict.json', 'r') as fp:
-        video_dict = json.load(fp)
+    with open(dict_path + "/formats.json") as format_file:
+        file_types = json.load(format_file)
 
     # changed so it also works with files named f.e: script.bak.py
-    filename, extension = ''.join(file.split('.')[0:-1]), file.split('.')[-1]
+    filename, extension = ''.join(file.split('.')[0:-1]),\
+                          file.split('.')[-1].lower()
 
-    if extension in audio_dict:
-        return "audio/" + audio_dict[extension]
-    elif extension in video_dict:
-        return "video/" + video_dict[extension]
-    else:  # file not supported
-        return ""
-
+    for file_type in file_types:
+        for ext in file_types[file_type]:
+            if extension == ext:
+                return file_type + "/" + ext
+    return "notype"
 
 def gen_menu():
     """
