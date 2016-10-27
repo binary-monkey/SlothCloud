@@ -3,7 +3,6 @@
 
 import json
 import os
-from tempfile import TemporaryFile
 
 # <definition of global variables>
 abspath = os.path.dirname(os.path.abspath(__file__))
@@ -134,9 +133,6 @@ def gen_menu():
 
     # writes end section
     menu_file += "</body></html>"
-    # file = TemporaryFile()
-    # file.write(menu_file.encode("utf-8"))
-    # return file
     return menu_file
 
 if __name__ == "__main__":
