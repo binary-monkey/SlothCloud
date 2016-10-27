@@ -105,6 +105,7 @@ def get_type(file):
                 return file_type + "/" + ext
     return "notype"
 
+
 def gen_menu():
     """
     Autogenerates a menu with the media files stored in app/static/media/
