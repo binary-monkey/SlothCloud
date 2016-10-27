@@ -40,12 +40,13 @@ def open_media(file):
     media = file.replace("|", "/")
 
     with open(abspath + "/dictionaries/formats.json", "r") as format_file:
-        file_formats =  json.load(format_file)
+        file_formats = json.load(format_file)
 
     for file_type in file_formats:
-        return render_template(file_type + ".html") if \
-            file_type in get_type(media) else \
-            render_template("default.html")
+        if file_type in get_type(media):
+            return render_template(file_type + ".html")
+
+    return render_template("default.html")
 
 
 # create the media stream
