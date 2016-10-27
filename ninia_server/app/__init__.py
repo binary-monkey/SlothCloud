@@ -13,8 +13,7 @@ media = ""
 # root directory
 @app.route("/")
 def menu():
-    gen_menu()
-    return render_template("menu.html")
+    return gen_menu()
 
 
 # root directory
@@ -61,4 +60,5 @@ def return_feed(file):
 
 
 if __name__ == "__main__":
+    get_type(None)
     app.run(host="0.0.0.0", threaded=True)

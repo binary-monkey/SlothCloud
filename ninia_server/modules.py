@@ -3,11 +3,12 @@
 
 import json
 import os
+from tempfile import TemporaryFile
 
 # <definition of global variables>
 abspath = os.path.dirname(os.path.abspath(__file__))
 host = "localhost"
-port = "port"
+port = "5000"
 # </definition of global variables>
 
 
@@ -105,39 +106,6 @@ def get_type(file):
         return ""
 
 
-# stays for review, use gen_menu instead
-def gen_menu_file():
-    """
-    Autogenerates a menu with the media files stored in app/static/media/
-    """
-    global host, port
-    app_path = abspath + "/app/"
-
-    menu_entries = scan_scheme()
-    menu_file = open(app_path + "templates/menu.html", "w")
-
-    # writes beginning section
-    menu_file.write(
-        """<!DOCTYPE html><html lang="en">
-        <head><meta charset="UTF-8">
-        <title>Ninia - Menu</title>
-        </head><body><h1>Ninia (in-dev) - Menu</h1>""")
-
-    for category in menu_entries:
-        # Category name, first letter is upper
-        menu_file.write("\n<h2>" + category[0].upper() + category[1:] + "</h2>")
-        # List of all entries in category
-        for entry in menu_entries[category]:
-            entry = entry[1:].replace("/", "|")
-            menu_file.write(
-                '\n<a href="http://' + host + ':' + port + '/play/' + entry +
-                '">' + entry.replace("|", "/") + '</a>')
-            menu_file.write("<br>")
-
-    # writes end section
-    menu_file.write("</body></html>")
-
-
 def gen_menu():
     """
     Autogenerates a menu with the media files stored in app/static/media/
@@ -166,6 +134,10 @@ def gen_menu():
 
     # writes end section
     menu_file += "</body></html>"
+    # file = TemporaryFile()
+    # file.write(menu_file.encode("utf-8"))
+    # return file
+    return menu_file
 
 if __name__ == "__main__":
     # Test get_index() by printing the returned json of the root folder
