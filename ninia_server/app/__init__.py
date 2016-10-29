@@ -1,9 +1,10 @@
 # !/usr/bin/python3
 # -*- coding: utf-8 -*-
 
-from app.config.constants import abspath
-from flask import Flask, render_template, request, send_from_directory
+from app.config.constants import upload_folder
+from flask import Flask, redirect, render_template, request, send_from_directory, url_for
 from modules import *
+from utils import is_allowed
 from werkzeug.utils import secure_filename
 
 app = Flask(__name__)
@@ -59,7 +60,7 @@ def open_media(file):
 
     media = file.replace("|", "/")
 
-    with open(abspath + "/app/config/permissions.json", "r") as format_file:
+    with open(ninia_path + "/app/config/permissions.json", "r") as format_file:
         file_formats = json.load(format_file)["formats"]
 
     for file_type in file_formats:
@@ -75,6 +76,18 @@ def return_feed(file):
     media = file.replace("|", "/")
     return send_from_directory(os.path.join(app.root_path, 'static/media'),
                                media, mimetype=get_type(media))
+
+
+@app.route("/upload", methods=["POST"])
+def upload():
+    file = request.files["file"]
+    if file and len(file.filename.split(".")) > 1 \
+            and is_allowed(file.filename.split(".")[-1]):
+        filename = secure_filename(file.filename)
+        file.save(upload_folder + "/" + filename)
+        return "[*] File:" + filename + "was successfully uploaded."
+
+    return "Error."
 
 
 if __name__ == "__main__":

@@ -2,6 +2,6 @@
 # -*- coding: utf-8 -*-
 
 from app import app
-from app.config.constants import host
+from app.config.constants import host, port
 
-app.run(host=host, threaded=True)
+app.run(host=host, port=port, threaded=True)

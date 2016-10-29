@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 # -*- coding: utf-8 -*-
 
-from app.config.constants import abspath, host, port
+from app.config.constants import ninia_path, host, port
 from app.utils import get_permitted_formats
 import json
 import os
@@ -48,7 +48,7 @@ def get_index(path=""):
     """
 
     if not path:
-        path = abspath + "/app/static/media"
+        path = ninia_path + "/app/static/media"
 
     with open('app/config/permissions.json') as permission_file:
         permitted_dirs = json.load(permission_file)["directories"]["index"]
@@ -84,18 +84,17 @@ def get_type(file):
     Returns mimetype of the file given as a parameter
     :param file
     """
-    dict_path = abspath + "/app/config"
+    if file:
+        file_types = get_permitted_formats()
 
-    file_types = get_permitted_formats()
+        # changed so it also works with files named f.e: script.bak.py
+        filename, extension = ''.join(file.split('.')[0:-1]),\
+                              file.split('.')[-1].lower()
 
-    # changed so it also works with files named f.e: script.bak.py
-    filename, extension = ''.join(file.split('.')[0:-1]),\
-                          file.split('.')[-1].lower()
-
-    for file_type in file_types:
-        for ext in file_types[file_type]:
-            if extension == ext:
-                return file_type + "/" + ext
+        for file_type in file_types:
+            for ext in file_types[file_type]:
+                if extension == ext:
+                    return file_type + "/" + ext
     return "notype"
 
 
@@ -107,7 +106,7 @@ def read_scheme(path="", entries={}, file_types={}):
     :param entries: a dict: keys are file types (audio, video) and val are lists
     :return: dictionary with audio and video files dictionaries
     """
-    app_path = abspath + "/app/"
+    app_path = ninia_path + "/app/"
     scheme = get_scheme(app_path + "static/media" + path, restricted=False)
     if not file_types:
         file_types = get_permitted_formats()
