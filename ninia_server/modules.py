@@ -55,8 +55,8 @@ def scan_scheme(path="", entries={}, file_types={}):
             except KeyError as ke:
                 pass
 
-    for file_type in file_types:
-        for file in scheme["files"]:
+    for file in scheme["files"]:
+        for file_type in file_types:
             if file_type in get_type(file):
                     try:
                         if not path + "/" + file in entries[file_type]:
