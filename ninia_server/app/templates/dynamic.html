@@ -10,7 +10,7 @@
 
     {% if ftype == "audio" %}
       <p>Audio</p>
-      <audio src="{{ url_for('media_feed') }}" controls>
+      <audio src="{{ url_for('media_feed') }}" controls></audio>
     {% else %}
 
       {% if ftype == "video" %}

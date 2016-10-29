@@ -1,14 +1,12 @@
 # !/usr/bin/python3
 # -*- coding: utf-8 -*-
 
-from flask import Flask, render_template, send_from_directory
-
+from app.config.constants import abspath
+from flask import Flask, render_template, request, send_from_directory
 from modules import *
+from werkzeug.utils import secure_filename
 
 app = Flask(__name__)
-abspath = os.path.dirname(os.path.abspath(__file__))
-
-media = ""
 
 
 # root directory
@@ -17,10 +15,18 @@ def menu():
     return gen_menu()
 
 
-# root directory
-@app.route("/index.json")
-def index():
-    return get_index()
+@app.route("/antigravity")
+def antigravity():
+    return ("""
+    <html>
+    <body><script>
+    window.location = "https://xkcd.com/353/"
+    </script>
+    </noscript>
+    <h3> You'll have to enable scripts if you want to fly :/ </h3>
+    </noscript></body>
+    </html>
+    """)
 
 
 # webpage icon
@@ -31,23 +37,10 @@ def favicon():
                                mimetype='image/vnd.microsoft.icon')
 
 
-# plays media, allows to input file in url
-@app.route("/play/<string:file>")
-def open_media(file):
-
-    global abspath, media
-
-    media = file.replace("|", "/")
-
-    with open(abspath + "/dictionaries/formats.json", "r") as format_file:
-        file_formats = json.load(format_file)
-
-    for file_type in file_formats:
-        if file_type in get_type(media):
-            # return render_template(file_type + ".html")
-            return render_template("dynamic.html", ftype=file_type)
-
-    return render_template("default.html")
+# root directory
+@app.route("/index.json")
+def index():
+    return get_index()
 
 
 # create the media stream
@@ -56,6 +49,24 @@ def media_feed():
     global media
     return send_from_directory(os.path.join(app.root_path, 'static/media'),
                                media, mimetype=get_type(media))
+
+
+# plays media, allows to input file in url
+@app.route("/play/<string:file>")
+def open_media(file):
+
+    global media
+
+    media = file.replace("|", "/")
+
+    with open(abspath + "/app/config/permissions.json", "r") as format_file:
+        file_formats = json.load(format_file)["formats"]
+
+    for file_type in file_formats:
+        if file_type in get_type(media):
+            return render_template("dynamic.html", ftype=file_type)
+
+    return render_template("default.html")
 
 
 # return media feed without interface from, allows to input file in url

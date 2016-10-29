@@ -1,5 +1,22 @@
 {
   "directories" : {
-    "index": ["ninia_server/app/static"]
+    "index": ["ninia_server/app/static/media"]
+  },
+  "formats": {
+    "audio": {
+      "mp3": "mpeg",
+      "ogg": "ogg",
+      "wav": "wav"
+    },
+    "video": {
+      "mp4": "mp4",
+      "ogv": "ogg",
+      "webm": "webm"
+    },
+    "image": {
+      "png": "png",
+      "jpg": "jpg",
+      "jpeg": "jpeg"
+    }
   }
 }

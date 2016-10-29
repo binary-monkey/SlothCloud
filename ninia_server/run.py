@@ -2,5 +2,6 @@
 # -*- coding: utf-8 -*-
 
 from app import app
+from app.config.constants import host
 
-app.run(host='0.0.0.0', threaded=True)
+app.run(host=host, threaded=True)

@@ -1,14 +1,60 @@
 #!/usr/bin/python3
 # -*- coding: utf-8 -*-
 
+from app.config.constants import abspath, host, port
+from app.utils import get_permitted_formats
 import json
 import os
 
-# <definition of global variables>
-abspath = os.path.dirname(os.path.abspath(__file__))
-host = "localhost"
-port = "5000"
-# </definition of global variables>
+
+media = ""
+
+
+def gen_menu():
+    """
+    Autogenerates a menu with the media files stored in app/static/media/
+    """
+    menu_entries = read_scheme()
+
+    # menu_file variable will be the html file.
+    # writes beginning section
+    menu_file = """
+        <!DOCTYPE html><html lang="en">
+        <head><meta charset="UTF-8">
+        <title>Ninia - Menu</title>
+        </head><body><h1>Ninia (in-dev) - Menu</h1>"""
+
+    for category in sorted(menu_entries.keys()):
+        # Category name, first letter is upper
+        menu_file += "\n<h2>" + category[0].upper() + category[1:] + "</h2>"
+        # List of all entries in category
+        for entry in sorted(menu_entries[category]):
+            entry = entry[1:].replace("/", "|")
+            menu_file += '\n<a href="http://' + host + ':' + port + '/play/' + \
+                         entry + '">' + entry.replace("|", "/") + '</a>'
+            menu_file += "<br>"
+
+    # writes end section
+    menu_file += "</body></html>"
+    return menu_file
+
+
+# todo: optimize restriction check
+def get_index(path=""):
+    """
+    Returns json file containing the files and directories subsequent to the path
+    passed as a parameter. Each folder has a list containing everything in of it.
+    :param path: optional, default=root
+    """
+
+    if not path:
+        path = abspath + "/app/static/media"
+
+    with open('app/config/permissions.json') as permission_file:
+        permitted_dirs = json.load(permission_file)["directories"]["index"]
+
+    return json.dumps({path: get_scheme(path, permitted_dirs=permitted_dirs)},
+                      ensure_ascii=False, indent=4, sort_keys=True)
 
 
 def get_scheme(path, restricted=True, permitted_dirs=[]):
@@ -33,8 +79,28 @@ def get_scheme(path, restricted=True, permitted_dirs=[]):
     } if not restricted else {}
 
 
+def get_type(file):
+    """
+    Returns mimetype of the file given as a parameter
+    :param file
+    """
+    dict_path = abspath + "/app/config"
+
+    file_types = get_permitted_formats()
+
+    # changed so it also works with files named f.e: script.bak.py
+    filename, extension = ''.join(file.split('.')[0:-1]),\
+                          file.split('.')[-1].lower()
+
+    for file_type in file_types:
+        for ext in file_types[file_type]:
+            if extension == ext:
+                return file_type + "/" + ext
+    return "notype"
+
+
 # todo: scans the same directory multiple times. Find reason and fix.
-def scan_scheme(path="", entries={}, file_types={}):
+def read_scheme(path="", entries={}, file_types={}):
     """
     Scans scheme for files dividing them into categories
     :param path: root directory to scan
@@ -44,13 +110,12 @@ def scan_scheme(path="", entries={}, file_types={}):
     app_path = abspath + "/app/"
     scheme = get_scheme(app_path + "static/media" + path, restricted=False)
     if not file_types:
-        with open("app/dictionaries/formats.json", "r") as format_file:
-            file_types = json.load(format_file)
+        file_types = get_permitted_formats()
 
     for folder in scheme["folders"]:
         for file_type in file_types:
             try:
-                entries = scan_scheme(path + "/" + folder,
+                entries = read_scheme(path + "/" + folder,
                                       entries=entries, file_types=file_types)
             except KeyError as ke:
                 pass
@@ -66,75 +131,6 @@ def scan_scheme(path="", entries={}, file_types={}):
                         entries[file_type] = [path + "/" + file]
     return entries
 
-
-# todo: optimize restriction check
-def get_index(path=""):
-    """
-    Returns json file containing the files and directories subsequent to the path
-    passed as a parameter. Each folder has a list containing everything in of it.
-    :param path: optional, default=root
-    """
-
-    if not path:
-        path = abspath + "/app/static/media"
-
-    with open('app/config/permissions.json') as permission_file:
-        permitted_dirs = json.load(permission_file)["directories"]["index"]
-
-    return json.dumps({path: get_scheme(path, permitted_dirs=permitted_dirs)},
-                      ensure_ascii=False, indent=4, sort_keys=True)
-
-
-def get_type(file):
-    """
-    Returns mimetype of the file given as a parameter
-    :param file
-    """
-    dict_path = abspath + "/app/dictionaries"
-
-    with open(dict_path + "/formats.json") as format_file:
-        file_types = json.load(format_file)
-
-    # changed so it also works with files named f.e: script.bak.py
-    filename, extension = ''.join(file.split('.')[0:-1]),\
-                          file.split('.')[-1].lower()
-
-    for file_type in file_types:
-        for ext in file_types[file_type]:
-            if extension == ext:
-                return file_type + "/" + ext
-    return "notype"
-
-
-def gen_menu():
-    """
-    Autogenerates a menu with the media files stored in app/static/media/
-    """
-    global host, port
-
-    menu_entries = scan_scheme()
-
-    # menu_file variable will be the html file.
-    # writes beginning section
-    menu_file = """
-        <!DOCTYPE html><html lang="en">
-        <head><meta charset="UTF-8">
-        <title>Ninia - Menu</title>
-        </head><body><h1>Ninia (in-dev) - Menu</h1>"""
-
-    for category in sorted(menu_entries.keys()):
-        # Category name, first letter is upper
-        menu_file += "\n<h2>" + category[0].upper() + category[1:] + "</h2>"
-        # List of all entries in category
-        for entry in sorted(menu_entries[category]):
-            entry = entry[1:].replace("/", "|")
-            menu_file += '\n<a href="http://' + host + ':' + port + '/play/' + \
-                         entry + '">' + entry.replace("|", "/") + '</a>'
-            menu_file += "<br>"
-
-    # writes end section
-    menu_file += "</body></html>"
-    return menu_file
 
 if __name__ == "__main__":
     # Test get_index() by printing the returned json of the root folder
