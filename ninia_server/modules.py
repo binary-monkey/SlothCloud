@@ -5,9 +5,16 @@ from app.config.constants import ninia_path, host, port
 from app.utils import get_permitted_formats
 import json
 import os
+from shutil import rmtree
 
 
 media = ""
+
+
+def clean_dir(path):
+    for element in os.listdir(path):
+        if os.path.isdir(path + '/' + element) and not os.listdir(path + '/' + element):
+            rmtree(path + '/' + element)
 
 
 def gen_menu():
@@ -21,7 +28,7 @@ def gen_menu():
     menu_file = """
         <!DOCTYPE html><html lang="en">
         <head><meta charset="UTF-8">
-        <title>Ninia - Menu</title>
+        <title>Ninia - Main Index</title>
         </head><body><h1>Ninia (in-dev) - Menu</h1>"""
 
     for category in sorted(menu_entries.keys()):
@@ -104,7 +111,7 @@ def read_scheme(path="", entries={}, file_types={}):
     Scans scheme for files dividing them into categories
     :param path: root directory to scan
     :param entries: a dict: keys are file types (audio, video) and val are lists
-    :return: dictionary with audio and video files dictionaries
+    :return: dictionary with files with files sorted in categories (audio, video..)
     """
     app_path = ninia_path + "/app/"
     scheme = get_scheme(app_path + "static/media" + path, restricted=False)

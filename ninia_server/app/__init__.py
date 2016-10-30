@@ -24,7 +24,7 @@ def antigravity():
     window.location = "https://xkcd.com/353/"
     </script>
     </noscript>
-    <h3> You'll have to enable scripts if you want to fly :/ </h3>
+    <h3> <a href="https://www.xkcd.com/353/">https://www.xkcd.com/353/</a> </h3>
     </noscript></body>
     </html>
     """)
@@ -80,11 +80,32 @@ def return_feed(file):
 
 @app.route("/upload", methods=["POST"])
 def upload():
+    # folder passed as a parameter in the url
+    subfolder = request.args.get("folder").replace('"', '').replace("'", '')
+    # file of the http post request
     file = request.files["file"]
+
+    # if file exists, has an extension and the extension is supported
     if file and len(file.filename.split(".")) > 1 \
             and is_allowed(file.filename.split(".")[-1]):
+
         filename = secure_filename(file.filename)
-        file.save(upload_folder + "/" + filename)
+        filename = subfolder + "/" + filename
+        temp_path = upload_folder
+
+        # create necessary folders
+        for path in subfolder.split('/'):
+            try:
+                os.mkdir(temp_path + "/" + path)
+            except FileExistsError as fee:
+                pass
+            temp_path += "/" + path
+
+        # save file in abspath
+        file.save(''.join([upload_folder] + ["/" + x for x in filename.split('/')]))
+        # function that removes all empty directories
+        clean_dir(upload_folder)
+
         return "[*] File:" + filename + "was successfully uploaded."
 
     return "Error."
