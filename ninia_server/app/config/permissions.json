@@ -17,6 +17,9 @@
       "png": "png",
       "jpg": "jpg",
       "jpeg": "jpeg"
+    },
+    "pdf": {
+      "pdf": "pdf"
     }
   }
 }

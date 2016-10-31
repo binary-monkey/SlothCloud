@@ -24,9 +24,13 @@
           <p>Image</p>
           <img src="{{ url_for('media_feed') }}">
         {% else %}
-
-          <p> this format is not supported yet, sorry :/> </p>
-
+          {% if ftype == "pdf" %}
+          <h3><a href="{{ url_for('media_feed') }}">
+            Download the pdf file by clicking here
+          </a></h3>
+          {% else %}
+            <p> this format is not supported yet, sorry :/> </p>
+          {% endif %}
         {% endif %}
       {% endif %}
     {% endif %}
