@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from app.config.constants import upload_folder
-from flask import Flask, redirect, render_template, request, send_from_directory, url_for
+from flask import Flask, render_template, request, send_from_directory
 from modules import *
 from utils import is_allowed
 from werkzeug.utils import secure_filename
@@ -16,6 +16,7 @@ def menu():
     return gen_menu()
 
 
+# ignore this one
 @app.route("/antigravity")
 def antigravity():
     return ("""
@@ -42,6 +43,13 @@ def favicon():
 @app.route("/index.json")
 def index():
     return get_index()
+
+
+# returns json of dir
+@app.route("/listdir/<path:dir>")
+def list_dir(dir):
+    index = get_index(dir)
+    return index if index else "Invalid directory."
 
 
 # create the media stream

@@ -53,16 +53,20 @@ def get_index(path=""):
     passed as a parameter. Each folder has a list containing everything in of it.
     :param path: optional, default=root
     """
-
+    rel_path = path
     if not path:
         path = ninia_path + "/app/static/media"
+    else:
+        path = ninia_path + "/app/static/media/" + path
 
-    with open('app/config/permissions.json') as permission_file:
-        permitted_dirs = json.load(permission_file)["directories"]["index"]
+    if os.path.exists(path) and os.path.isdir(path):
+        with open('app/config/permissions.json') as permission_file:
+            permitted_dirs = json.load(permission_file)["directories"]["index"]
 
-    return json.dumps({path: get_scheme(path, permitted_dirs=permitted_dirs)},
-                      ensure_ascii=False, indent=4, sort_keys=True)
-
+        return json.dumps({rel_path: get_scheme(path, permitted_dirs=permitted_dirs)},
+                          ensure_ascii=False, indent=4, sort_keys=True)
+    else:
+        return {}
 
 def get_scheme(path, restricted=True, permitted_dirs=[]):
     """
@@ -77,7 +81,6 @@ def get_scheme(path, restricted=True, permitted_dirs=[]):
         for directory in permitted_dirs:
             if directory in path:
                 restricted = False
-
     return {
         "folders": {x: get_scheme(path + "/" + x, restricted, permitted_dirs)
                     for x in os.listdir(path) if os.path.isdir(path + "/" + x)},
@@ -111,6 +114,7 @@ def read_scheme(path="", entries={}, file_types={}):
     Scans scheme for files dividing them into categories
     :param path: root directory to scan
     :param entries: a dict: keys are file types (audio, video) and val are lists
+    :param file_types: supported file types
     :return: dictionary with files with files sorted in categories (audio, video..)
     """
     app_path = ninia_path + "/app/"
