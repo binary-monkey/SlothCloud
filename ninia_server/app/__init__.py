@@ -46,6 +46,13 @@ def index():
 
 
 # returns json of dir
+@app.route("/listdir")
+def list_root():
+    index = get_index()
+    return index if index else "Invalid directory."
+
+
+# returns json of dir
 @app.route("/listdir/<path:dir>")
 def list_dir(dir):
     index = get_index(dir)
