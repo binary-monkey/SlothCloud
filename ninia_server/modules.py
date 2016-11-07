@@ -68,6 +68,7 @@ def get_index(path=""):
     else:
         return {}
 
+
 def get_scheme(path, restricted=True, permitted_dirs=[]):
     """
     Recursively scans directories and returns a dictionary containing a list

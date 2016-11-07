@@ -8,4 +8,4 @@ setup(name="NiniaServer", version="0.1",
       mikelsolabarrieta@protonmail.com;
       rafaelromonsagredo@protonmail.com""",
       url="https://github.com/RafaelRomon/Ninia",
-      install_requires=["flask"])
+      install_requires=["flask", "Flask-AutoIndex"])
