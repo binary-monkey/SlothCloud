@@ -1,6 +1,5 @@
 .idea
 __pycache__
 ninia_server/app/static/media/*
-!ninia_server/app/static/media/Peter\ And\ The\ Wolf.ogg
-!ninia_server/app/static/media/Popeye\ For\ President.mp4
+!ninia_server/app/static/media/samples/
 ninia_server/app/templates/menu.html
