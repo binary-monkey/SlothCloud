@@ -6,8 +6,10 @@ from flask import Flask, render_template, request, send_from_directory
 from modules import *
 from utils import is_allowed
 from werkzeug.utils import secure_filename
+from flask.ext.autoindex import AutoIndex
 
 app = Flask(__name__)
+AutoIndex(app,browse_root=ninia_path + "/app/static/media", add_url_rules=True)
 
 
 # root directory

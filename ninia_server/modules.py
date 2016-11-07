@@ -17,7 +17,7 @@ def clean_dir(path):
             rmtree(path + '/' + element)
 
 
-def gen_menu():
+def gen_menu_back():
     """
     Autogenerates a menu with the media files stored in app/static/media/
     """
@@ -43,6 +43,41 @@ def gen_menu():
 
     # writes end section
     menu_file += "</body></html>"
+    return menu_file
+
+def gen_menu():
+    """
+    Autogenerates a table with the media files stored in app/static/media/
+    """
+    menu_entries = read_scheme()
+
+    # menu_file variable will be the html file.
+    # writes beginning section
+    menu_file = """
+        <!DOCTYPE html><html lang="en">
+        <head><meta charset="UTF-8">
+        <title>Ninia - Main Index</title>
+        </head><body>
+        <TABLE BORDER="5"    WIDTH="50%"   CELLPADDING="4" CELLSPACING="3">
+            <TR>
+                <TH COLSPAN="2"><BR><H3>Ninia (in-dev) - Menu</H3>
+                </TH>
+            </TR>
+            <TR ALIGN="CENTER">"""
+
+    for category in sorted(menu_entries.keys()):
+        # Category name, first letter is upper
+        menu_file += "\n<TD>" + category[0].upper() + category[1:] + "</TD>"
+        # List of all entries in category
+        for entry in sorted(menu_entries[category]):
+            entry = entry[1:].replace("/", "|")
+            menu_file += '\n<TD><a href="http://' + host + ':' + port + '/play/' + \
+                         entry + '">' + entry.replace("|", "/") + '</TD>'
+            ##menu_file += "<br>"
+        menu_file += """</TR><TR ALIGN="CENTER">"""
+
+    # writes end section
+    menu_file += "</TR></TABLE></body></html>"
     return menu_file
 
 
