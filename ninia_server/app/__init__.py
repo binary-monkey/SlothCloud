@@ -4,18 +4,12 @@
 from app.config.constants import upload_folder
 from flask import Flask, render_template, request, send_from_directory
 from modules import *
-from utils import is_allowed
+from utils import is_allowed, get_permissions
 from werkzeug.utils import secure_filename
-from flask.ext.autoindex import AutoIndex
+from flask_autoindex import AutoIndex
 
 app = Flask(__name__)
 AutoIndex(app,browse_root=ninia_path + "/app/static/media", add_url_rules=True)
-
-
-# root directory
-@app.route("/")
-def menu():
-    return gen_menu()
 
 
 # ignore this one
@@ -69,6 +63,12 @@ def media_feed():
                                media, mimetype=get_type(media))
 
 
+# root directory
+@app.route("/menu")
+def menu():
+    return gen_menu()
+
+
 # plays media, allows to input file in url
 @app.route("/play/<string:file>")
 def open_media(file):
@@ -110,20 +110,25 @@ def upload():
         filename = subfolder + "/" + filename
         temp_path = upload_folder
 
-        # create necessary folders
-        for path in subfolder.split('/'):
-            try:
-                os.mkdir(temp_path + "/" + path)
-            except FileExistsError as fee:
-                pass
-            temp_path += "/" + path
+        try:  # May be unnecessary
+            if not subfolder.split('/')[0].lower().strip() in get_permissions()[
+                "reserved words"]:
+                # create necessary folders
+                for path in subfolder.split('/'):
+                    try:
+                        os.mkdir(temp_path + "/" + path)
+                    except FileExistsError as fee:
+                        pass
+                    temp_path += "/" + path
 
-        # save file in abspath
-        file.save(''.join([upload_folder] + ["/" + x for x in filename.split('/')]))
-        # function that removes all empty directories
-        clean_dir(upload_folder)
+                # save file in abspath
+                file.save(''.join([upload_folder] + ["/" + x for x in filename.split('/')]))
+                # function that removes all empty directories
+                clean_dir(upload_folder)
 
-        return "[*] File:" + filename + "was successfully uploaded."
+                return "[*] File:" + filename + "was successfully uploaded."
+        except:
+            pass
 
     return "Error."
 

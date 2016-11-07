@@ -21,5 +21,16 @@
     "pdf": {
       "pdf": "pdf"
     }
-  }
+  },
+  "reserved words": [
+    "antigravity",
+    "favicon.ico",
+    "index",
+    "listdir",
+    "media_feed",
+    "menu,",
+    "media_feed",
+    "play",
+    "upload"
+  ]
 }
