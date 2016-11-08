@@ -24,12 +24,14 @@
   },
   "reserved words": [
     "antigravity",
+    "errors",
     "favicon.ico",
     "index",
     "listdir",
-    "media_feed",
     "menu",
+    "media_feed",
     "play",
+    "rename",
     "upload"
   ]
 }

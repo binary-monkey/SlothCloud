@@ -1,0 +1,9 @@
+{
+  "0": "System error",
+  "1": "Missing required parameters",
+  "2": "File not found",
+  "3": "Invalid filename",
+  "4": "Not a directory",
+  "5": "Unsupported extension",
+  "6": "Restricted folder"
+}

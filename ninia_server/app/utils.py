@@ -2,13 +2,18 @@ import json
 import os
 
 
-def get_permissions():
-    with open(os.path.dirname(os.path.abspath(__file__)) + "/config/permissions.json",
-              'r') as format_file:
-        return json.load(format_file)
+
+def get_config(json_filename):
+    try:
+        with open(os.path.dirname(os.path.abspath(__file__)) + "/config/" +
+                          json_filename + ".json", 'r') as file:
+            return json.load(file)
+    except FileNotFoundError as fnfe:
+        return {"error": "0"}
+
 
 def get_permitted_formats():
-        return get_permissions()["formats"]
+        return get_config("permissions")["formats"]
 
 
 def is_allowed(fformat):

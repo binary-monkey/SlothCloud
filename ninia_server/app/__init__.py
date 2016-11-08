@@ -4,7 +4,7 @@
 from app.config.constants import upload_folder
 from flask import Flask, render_template, request, send_from_directory
 from modules import *
-from utils import is_allowed, get_permissions
+from utils import is_allowed, get_config
 from werkzeug.utils import secure_filename
 from flask_autoindex import AutoIndex
 
@@ -26,6 +26,12 @@ def antigravity():
     </html>
     """)
 
+
+# Returns error codes and descriptions
+@app.route("/errors")
+def errors():
+    with open(ninia_path + "/app/config/errors.json", 'r') as error_list:
+        return error_list.read()
 
 # webpage icon
 @app.route('/favicon.ico')
@@ -52,7 +58,7 @@ def list_root():
 @app.route("/listdir/<path:dir>")
 def list_dir(dir):
     index = get_index(dir)
-    return index if index else "Invalid directory."
+    return index if index else json.dumps({"error": "4"})  # Not a directory
 
 
 # create the media stream
@@ -95,6 +101,40 @@ def return_feed(file):
                                media, mimetype=get_type(media))
 
 
+@app.route("/rename")
+def rename():
+
+    old, new = str(request.args.get("old")), str(request.args.get("new"))
+
+    if old != "None" and new != "None":
+
+        if os.path.isfile(ninia_path + "/app/static/media/" + old):
+
+            if old.split(".")[-1].lower() == new.split(".")[-1].lower() and len(
+                new.split(".")) > 1:
+
+                try:
+                    os.rename(
+                        ninia_path + "/app/static/media/" + old,
+                        ninia_path + "/app/static/media/" + new
+                    )
+                    return "File (1) moved to (2)<br>(1):%s<br>(2):%s" % (old, new)
+
+                except Exception as ex:
+                    # System error
+                    return json.dumps({"error": "0"})
+            else:
+                print(old.split(".")[-1].lower() + "__" + new.split(".")[-1].lower())
+                # Invalid filename
+                return json.dumps({"error": "3"})
+        else:
+            # File not found
+            return json.dumps({"error": "2"})
+    else:
+        # Missing required parameters
+        return json.dumps({"error": "1", "parameters": ["old", "new"] })
+
+
 @app.route("/upload", methods=["POST"])
 def upload():
     # folder passed as a parameter in the url
@@ -102,35 +142,45 @@ def upload():
     # file of the http post request
     file = request.files["file"]
 
-    # if file exists, has an extension and the extension is supported
-    if file and len(file.filename.split(".")) > 1 \
-            and is_allowed(file.filename.split(".")[-1]):
+    if not file:
+        # File not found
+        return json.dumps({"error": "2"})
 
-        filename = secure_filename(file.filename)
-        filename = subfolder + "/" + filename
-        temp_path = upload_folder
+    if len(file.filename.split(".")) < 2:
+        # Incorrect filename
+        return json.dumps({"error": "3"})
 
-        try:  # May be unnecessary
-            if not subfolder.split('/')[0].lower().strip() in get_permissions()[
-                "reserved words"]:
-                # create necessary folders
-                for path in subfolder.split('/'):
-                    try:
-                        os.mkdir(temp_path + "/" + path)
-                    except FileExistsError as fee:
-                        pass
-                    temp_path += "/" + path
+    if not is_allowed(file.filename.split(".")[-1]):
+        # Unsupported extension
+        return json.dumps({"error": "5"})
 
-                # save file in abspath
-                file.save(''.join([upload_folder] + ["/" + x for x in filename.split('/')]))
-                # function that removes all empty directories
-                clean_dir(upload_folder)
+    filename = secure_filename(file.filename)
+    filename = subfolder + "/" + filename
+    temp_path = upload_folder
 
-                return "[*] File:" + filename + "was successfully uploaded."
+
+    if not subfolder.split('/')[0].lower().strip() in get_config("permissions")[
+        "reserved words"]:
+        # create necessary folders
+        for path in subfolder.split('/'):
+            try:
+                os.mkdir(temp_path + "/" + path)
+            except FileExistsError as fee:
+                pass
+            temp_path += "/" + path
+
+        # save file in abspath
+        try:
+            file.save(''.join([upload_folder] + ["/" + x for x in filename.split('/')]))
         except:
-            pass
+            # System Error
+            return json.dumps({"error": "0"})
+        # function that removes all empty directories
+        clean_dir(upload_folder)
 
-    return "Error."
+        return "[*] File:" + filename + "was successfully uploaded."
+    else:
+        return json.dumps({"error": "6"})
 
 
 if __name__ == "__main__":
