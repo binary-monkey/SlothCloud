@@ -1,8 +1,19 @@
+"""
+Here we define functions required in modules.py but that are not called from
+app/__init.py
+"""
+
 from app.config.constants import ninia_path
 import json
 import os
+from shutil import rmtree
 from werkzeug.utils import secure_filename
 
+
+def clean_dir(path):
+    for element in os.listdir(path):
+        if os.path.isdir(path + '/' + element) and not os.listdir(path + '/' + element):
+            rmtree(path + '/' + element)
 
 
 def get_config(json_filename):

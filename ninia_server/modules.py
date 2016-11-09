@@ -1,23 +1,22 @@
 #!/usr/bin/python3
 # -*- coding: utf-8 -*-
 
-from app.config.constants import ninia_path, host, port
+"""
+The goal of this file is to have here the functions app/__init__.py uses
+so that file can be read with no difficulties.
+"""
+
+from app.config.constants import ninia_path, host, port, upload_folder
 from app.utils import get_permitted_formats
 import json
 import os
-from shutil import rmtree
-
+from utils import clean_dir, get_config, is_allowed, makedirs
+from werkzeug.utils import secure_filename
 
 media = ""
 
 
-def clean_dir(path):
-    for element in os.listdir(path):
-        if os.path.isdir(path + '/' + element) and not os.listdir(path + '/' + element):
-            rmtree(path + '/' + element)
-
-
-def gen_menu_back():
+def gen_menu_abslist():
     """
     Autogenerates a menu with the media files stored in app/static/media/
     """
@@ -45,7 +44,7 @@ def gen_menu_back():
     menu_file += "</body></html>"
     return menu_file
 
-def gen_menu():
+def gen_menu_table():
     """
     Autogenerates a table with the media files stored in app/static/media/
     """
@@ -177,6 +176,84 @@ def read_scheme(path="", entries={}, file_types={}):
                         entries[file_type] = [path + "/" + file]
     return entries
 
+
+def rename(old, new):
+    if old != "None" and new != "None":
+
+        if os.path.isfile(ninia_path + "/app/static/media/" + old):
+
+            if old.split(".")[-1].lower() == new.split(".")[
+                -1].lower() and len(
+                    new.split(".")) > 1:
+
+                try:
+                    # create necessary directories
+                    if len(new.split('/')) > 1:
+                        makedirs(''.join(
+                            [x + '/' for x in new.split('/')[0:-1]]))
+
+                    os.rename(
+                        ninia_path + "/app/static/media/" + old,
+                        ninia_path + "/app/static/media/" + new
+                    )
+                    clean_dir(ninia_path + "/app/static/media")
+                    return "File (1) moved to (2)<br>(1):%s<br>(2):%s" % (
+                    old, new)
+
+                except Exception as ex:
+                    clean_dir(ninia_path + "/app/static/media")
+                    # System error
+                    return json.dumps({"error": "0"})
+            else:
+                print(old.split(".")[-1].lower() + "__" + new.split(".")[
+                    -1].lower())
+                # Invalid filename
+                return json.dumps({"error": "3"})
+        else:
+            # File not found
+            return json.dumps({"error": "2"})
+    else:
+        # Missing required parameters
+        return json.dumps({"error": "1", "parameters": ["old", "new"]})
+
+
+def upload(file, folder):
+    if not file:
+        # File not found
+        return json.dumps({"error": "2"})
+
+    if len(file.filename.split(".")) < 2:
+        # Incorrect filename
+        return json.dumps({"error": "3"})
+
+    if not is_allowed(file.filename.split(".")[-1]):
+        # Unsupported extension
+        return json.dumps({"error": "5"})
+
+    filename = secure_filename(file.filename)
+    filename = folder + "/" + filename
+    temp_path = upload_folder
+
+
+    if not folder.split('/')[0].lower().strip() in get_config("permissions")[
+        "reserved words"]:
+        # create necessary folders
+        if len(folder.split('/')) > 1:
+            makedirs(''.join([x + '/' for x in folder.split('/')[0:-1]]))
+
+        # save file in abspath
+        try:
+            file.save(''.join([upload_folder] + [
+                "/" + x for x in filename.split('/')]))
+        except:
+            # System Error
+            return json.dumps({"error": "0"})
+        # function that removes all empty directories
+        clean_dir(upload_folder)
+
+        return "[*] File:" + filename + "was successfully uploaded."
+    else:
+        return json.dumps({"error": "6"})
 
 if __name__ == "__main__":
     # Test get_index() by printing the returned json of the root folder
