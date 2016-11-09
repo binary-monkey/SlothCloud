@@ -52,7 +52,7 @@ def index():
 @app.route("/listdir")
 def list_root():
     index = modules.get_index()
-    return index if index else "Invalid directory."
+    return index if index else json.dumps({"error": "4"})
 
 
 # returns json of dir
