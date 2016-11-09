@@ -1,5 +1,7 @@
+from app.config.constants import ninia_path
 import json
 import os
+from werkzeug.utils import secure_filename
 
 
 
@@ -25,3 +27,26 @@ def is_allowed(fformat):
 
     return False
 
+
+def makedirs(path, prevpath=""):
+    if path[-1] == '/':
+        path = path[0:-1]
+    error = ""
+    if '/' in path:
+        dirlist = path.split("/")
+        try:
+            os.mkdir(ninia_path + "/app/static/media/" +
+                     str(prevpath) + secure_filename(dirlist[0]))
+        except FileExistsError:
+            pass
+        if not error:
+            error = makedirs(path=''.join(
+                [x + '/' for x in dirlist[1:]]),
+                prevpath=prevpath +
+                         ''.join(dirlist[0]))
+    else:
+        try:
+            os.mkdir(ninia_path + "/app/static/media/" + prevpath + '/' + secure_filename(path))
+        except:
+            return json.dumps({"error": "0"})
+    return error

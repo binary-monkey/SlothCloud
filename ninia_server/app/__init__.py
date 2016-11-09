@@ -3,10 +3,10 @@
 
 from app.config.constants import upload_folder
 from flask import Flask, render_template, request, send_from_directory
-from modules import *
-from utils import is_allowed, get_config
-from werkzeug.utils import secure_filename
 from flask_autoindex import AutoIndex
+from modules import *
+from utils import is_allowed, get_config, makedirs
+from werkzeug.utils import secure_filename
 
 app = Flask(__name__)
 AutoIndex(app,browse_root=ninia_path + "/app/static/media", add_url_rules=True)
@@ -114,13 +114,19 @@ def rename():
                 new.split(".")) > 1:
 
                 try:
+                    # create necessary directories
+                    if len(new.split('/')) > 1:
+                        makedirs(''.join([x + '/' for x in new.split('/')[0:-1]]))
+
                     os.rename(
                         ninia_path + "/app/static/media/" + old,
                         ninia_path + "/app/static/media/" + new
                     )
+                    clean_dir(ninia_path + "/app/static/media")
                     return "File (1) moved to (2)<br>(1):%s<br>(2):%s" % (old, new)
 
                 except Exception as ex:
+                    clean_dir(ninia_path + "/app/static/media")
                     # System error
                     return json.dumps({"error": "0"})
             else:
@@ -162,12 +168,8 @@ def upload():
     if not subfolder.split('/')[0].lower().strip() in get_config("permissions")[
         "reserved words"]:
         # create necessary folders
-        for path in subfolder.split('/'):
-            try:
-                os.mkdir(temp_path + "/" + path)
-            except FileExistsError as fee:
-                pass
-            temp_path += "/" + path
+        if len(subfolder.split('/')) > 1:
+            makedirs(''.join([x + '/' for x in subfolder.split('/')[0:-1]]))
 
         # save file in abspath
         try:
