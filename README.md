@@ -1,5 +1,5 @@
-# Ninia
-Ninia is a web-based media server made using Flask for Python3 
+# SlothCloud
+SlothCloud is a web-based media server made using Flask for Python3 
 
 ## Features
 ### Current:
