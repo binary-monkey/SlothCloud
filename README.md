@@ -23,3 +23,5 @@ I checked it in Raspbian and other Debian-based distros, no love for MacOS or Wi
 All sample files have been downloaded from [Internet Archive](https://archive.org) and fall under Public Domain
 
 More features comming soon :D
+
+This project is licensed under the terms of the GNU license.
