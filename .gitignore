@@ -1,5 +1,5 @@
 .idea
 __pycache__
-ninia_server/app/static/media/*
-!ninia_server/app/static/media/samples/
-ninia_server/app/templates/menu.html
+slcl_server/app/static/media/*
+!slcl_server/app/static/media/samples/
+slcl_server/app/templates/menu.html

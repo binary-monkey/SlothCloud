@@ -36,9 +36,9 @@ def gen_menu_abslist():
         menu_file += "\n<h2>" + category[0].upper() + category[1:] + "</h2>"
         # List of all entries in category
         for entry in sorted(menu_entries[category]):
-            entry = entry[1:].replace("/", "|")
+            entry = entry[1:]
             menu_file += '\n<a href="http://' + host + ':' + port + '/play/' + \
-                         entry + '">' + entry.replace("|", "/") + '</a>'
+                         entry + '">' + entry + '</a>'
             menu_file += "<br>"
 
     # writes end section
@@ -72,9 +72,9 @@ def gen_menu_table():
         menu_file += "\n<TD>" + category[0].upper() + category[1:] + "</TD>"
         # List of all entries in category
         for entry in sorted(menu_entries[category]):
-            entry = entry[1:].replace("/", "|")
+            entry = entry[1:]
             menu_file += '\n<TD><a href="http://' + host + ':' + port + '/play/' + \
-                         entry + '">' + entry.replace("|", "/") + '</TD>'
+                         entry + '">' + entry + '</TD>'
             ##menu_file += "<br>"
         menu_file += """</TR><TR ALIGN="CENTER">"""
 
@@ -143,7 +143,7 @@ def get_type(file):
             for ext in file_types[file_type]:
                 if extension == ext:
                     return file_type + "/" + ext
-    return "notype"
+    return str(None)
 
 
 # todo: scans the same directory multiple times. Find reason and fix.
@@ -180,12 +180,37 @@ def read_scheme(path="", entries={}, file_types={}):
     return entries
 
 
+def remove(path):
+    """
+    removes path and everything contained in it
+    :param path: path to be removed
+    :return: error if errors were made
+    """
+
+    # todo: authentication
+
+
+    if path[0] == '/':
+        path = path[1:]
+    path = ninia_path + "/app/static/media/" + path
+    try:
+        if os.path.isfile(path):
+            os.remove(path)
+        elif os.path.isdir(path):
+            rmtree(path)
+        else:
+            return json.dumps({"error": "4"})
+        return ""
+    except Exception:
+        return json.dumps({"error": "0"})
+
+
 def rename(old, new):
     """
     renames path or folder
     :param old: file to be renamed
     :param new: new name o path
-    :return: error if errors happened
+    :return: error if errors were made
     """
     if old != "None" and new != "None":
 
@@ -206,16 +231,13 @@ def rename(old, new):
                         ninia_path + "/app/static/media/" + new
                     )
                     clean_dir(ninia_path + "/app/static/media")
-                    return "File (1) moved to (2)<br>(1):%s<br>(2):%s" % (
-                    old, new)
+                    return ""
 
                 except Exception as ex:
                     clean_dir(ninia_path + "/app/static/media")
                     # System error
                     return json.dumps({"error": "0"})
             else:
-                print(old.split(".")[-1].lower() + "__" + new.split(".")[
-                    -1].lower())
                 # Invalid filename
                 return json.dumps({"error": "3"})
         else:
@@ -224,31 +246,6 @@ def rename(old, new):
     else:
         # Missing required parameters
         return json.dumps({"error": "1", "parameters": ["old", "new"]})
-
-
-def remove(path):
-    """
-    removes path and everything contained in it
-    :param path: path to be removed
-    :return: error if error happens
-    """
-
-    # todo: authentication
-
-
-    if path[0] == '/':
-        path = path[1:]
-    path = ninia_path + "/app/static/media/" + path
-    try:
-        if os.path.isfile(path):
-            os.rmdir(path)
-        elif os.path.isdir(path):
-            rmtree(path)
-        else:
-            return json.dumps({"error": "4"})
-        return ""
-    except Exception:
-        return json.dumps({"error": "0"})
 
 
 def upload(file, folder):

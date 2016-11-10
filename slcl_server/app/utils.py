@@ -1,6 +1,6 @@
 """
 Here we define functions required in modules.py but that are not called from
-app/__init.py
+app/__init__.py
 """
 
 from app.config.constants import ninia_path
@@ -82,7 +82,7 @@ def makedirs(path, _prevpath=""):
                          ''.join(dirlist[0]))
     else:
         try:
-            os.mkdir(ninia_path + "/app/static/media/" + prevpath + '/' + secure_filename(path))
+            os.mkdir(ninia_path + "/app/static/media/" + _prevpath + '/' + secure_filename(path))
         except:
             return json.dumps({"error": "0"})
     return error

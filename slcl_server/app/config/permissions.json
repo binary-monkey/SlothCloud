@@ -3,33 +3,40 @@
     "index": ["ninia_server/app/static/media"]
   },
   "formats": {
+    "application": {
+      "pdf": "pdf",
+      "json": "json"
+    },
     "audio": {
       "mp3": "mpeg",
       "ogg": "ogg",
       "wav": "wav"
-    },
-    "video": {
-      "mp4": "mp4",
-      "ogv": "ogg",
-      "webm": "webm"
     },
     "image": {
       "png": "png",
       "jpg": "jpg",
       "jpeg": "jpeg"
     },
-    "pdf": {
-      "pdf": "pdf"
+    "text": {
+      "html": "html"
+    },
+    "video": {
+      "mp4": "mp4",
+      "ogv": "ogg",
+      "webm": "webm"
     }
   },
   "reserved words": [
     "antigravity",
+    "download",
     "errors",
     "favicon.ico",
     "index",
     "listdir",
     "menu",
     "media_feed",
+    "None",
+    "Null",
     "play",
     "rename",
     "upload"
