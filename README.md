@@ -1,5 +1,5 @@
 # SlothCloud
-SlothCloud is a web-based media server made using Flask for Python3 
+SlothCloud is a RESTful server for storing and sharing media files made using Flask for Python3 
 
 ## Features
 ### Current:
