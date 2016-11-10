@@ -24,13 +24,15 @@
           <p>Image</p>
           <img src="{{ url_for('view', path=path) }}">
         {% else %}
+    
           {% if ftype == "application" %}
           <h3><a href="{{ url_for('view', path=path) }}">
             Download the pdf file by clicking here
           </a></h3>
           {% else %}
-            <p>"{{ url_for('view', path=path) }}"</p>
+    
             <p> this format is not supported yet, sorry :/> </p>
+    
           {% endif %}
         {% endif %}
       {% endif %}
