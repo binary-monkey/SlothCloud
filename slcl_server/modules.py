@@ -10,6 +10,7 @@ from app.config.constants import ninia_path, host, port, upload_folder
 from app.utils import get_permitted_formats
 import json
 import os
+from shutil import rmtree
 from utils import clean_dir, get_config, is_allowed, makedirs
 from werkzeug.utils import secure_filename
 
@@ -44,9 +45,11 @@ def gen_menu_abslist():
     menu_file += "</body></html>"
     return menu_file
 
+
 def gen_menu_table():
     """
     Autogenerates a table with the media files stored in app/static/media/
+    :return: html file of menu
     """
     menu_entries = read_scheme()
 
@@ -178,6 +181,12 @@ def read_scheme(path="", entries={}, file_types={}):
 
 
 def rename(old, new):
+    """
+    renames path or folder
+    :param old: file to be renamed
+    :param new: new name o path
+    :return: error if errors happened
+    """
     if old != "None" and new != "None":
 
         if os.path.isfile(ninia_path + "/app/static/media/" + old):
@@ -217,6 +226,31 @@ def rename(old, new):
         return json.dumps({"error": "1", "parameters": ["old", "new"]})
 
 
+def remove(path):
+    """
+    removes path and everything contained in it
+    :param path: path to be removed
+    :return: error if error happens
+    """
+
+    # todo: authentication
+
+
+    if path[0] == '/':
+        path = path[1:]
+    path = ninia_path + "/app/static/media/" + path
+    try:
+        if os.path.isfile(path):
+            os.rmdir(path)
+        elif os.path.isdir(path):
+            rmtree(path)
+        else:
+            return json.dumps({"error": "4"})
+        return ""
+    except Exception:
+        return json.dumps({"error": "0"})
+
+
 def upload(file, folder):
     if not file:
         # File not found
@@ -251,9 +285,10 @@ def upload(file, folder):
         # function that removes all empty directories
         clean_dir(upload_folder)
 
-        return "[*] File:" + filename + "was successfully uploaded."
+        return ""
     else:
         return json.dumps({"error": "6"})
+
 
 if __name__ == "__main__":
     # Test get_index() by printing the returned json of the root folder

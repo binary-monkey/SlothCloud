@@ -102,6 +102,11 @@ def return_feed(file):
                                media, mimetype=modules.get_type(media))
 
 
+@app.route("/remove/<string:path>")
+def remove(path):
+    modules.remove(path)
+
+
 # move/rename file
 @app.route("/rename")
 def rename():
