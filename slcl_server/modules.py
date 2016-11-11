@@ -1,27 +1,62 @@
 #!/usr/bin/python3
 # -*- coding: utf-8 -*-
 
+# todo: reserved file/folder name error
+
 """
 The goal of this file is to have here the functions app/__init__.py uses
 so that file can be read with no difficulties.
 """
 
-from app.config.constants import ninia_path, host, port, upload_folder
-from app.utils import get_permitted_formats
+from app.config.constants import app_path, host, media_path, port, upload_folder
+from app.utils import get_permitted_formats, nt
 import json
 import os
 from shutil import rmtree
 from utils import clean_dir, get_config, is_allowed, makedirs
 from werkzeug.utils import secure_filename
 
-media = ""
+
+# todo: scans the same directory multiple times. Find reason and fix.
+def absolute_list(path="", entries={}, file_types={}):
+    """
+    Scans scheme for files dividing them into categories
+    :param path: root directory to scan
+    :param entries: a dict: keys are file types (audio, video) and val are lists
+    :param file_types: supported file types
+    :return: dictionary with files with files sorted in categories (audio, video..)
+    """
+    scheme = get_scheme(media_path + nt(path), restricted=False)
+    if not file_types:
+        file_types = get_permitted_formats()
+
+    for folder in scheme["folders"]:
+        for file_type in file_types:
+            try:
+                entries = absolute_list(nt(path + "/" + folder),
+                                      entries=entries, file_types=file_types)
+            except KeyError:
+                pass
+
+    for file in scheme["files"]:
+        for file_type in file_types:
+            if file_type in get_type(file):
+                    try:
+                        if not path + "/" + file in entries[file_type]:
+                            # raise
+                            entries[file_type].append(path + "/" + file)
+                    except Exception:
+                        entries[file_type] = [path + "/" + file]
+    return entries
+
+
 
 
 def gen_menu_abslist():
     """
     Autogenerates a menu with the media files stored in app/static/media/
     """
-    menu_entries = read_scheme()
+    menu_entries = absolute_list()
 
     # menu_file variable will be the html file.
     # writes beginning section
@@ -37,8 +72,8 @@ def gen_menu_abslist():
         # List of all entries in category
         for entry in sorted(menu_entries[category]):
             entry = entry[1:]
-            menu_file += '\n<a href="http://' + host + ':' + port + '/play/' + \
-                         entry + '">' + entry + '</a>'
+            menu_file += '\n<a href="http://' + host + ':' + port + \
+                         '/display/' + entry + '">' + entry + '</a>'
             menu_file += "<br>"
 
     # writes end section
@@ -51,7 +86,7 @@ def gen_menu_table():
     Autogenerates a table with the media files stored in app/static/media/
     :return: html file of menu
     """
-    menu_entries = read_scheme()
+    menu_entries = absolute_list()
 
     # menu_file variable will be the html file.
     # writes beginning section
@@ -73,9 +108,8 @@ def gen_menu_table():
         # List of all entries in category
         for entry in sorted(menu_entries[category]):
             entry = entry[1:]
-            menu_file += '\n<TD><a href="http://' + host + ':' + port + '/play/' + \
-                         entry + '">' + entry + '</TD>'
-            ##menu_file += "<br>"
+            menu_file += '\n<TD><a href="http://' + host + ':' + port + \
+                         '/display/' + entry + '">' + entry + '</TD>'
         menu_file += """</TR><TR ALIGN="CENTER">"""
 
     # writes end section
@@ -90,17 +124,16 @@ def get_index(path=""):
     passed as a parameter. Each folder has a list containing everything in of it.
     :param path: optional, default=root
     """
-    rel_path = path
+    path = nt(path)
+    rel_path = path if path else "media"
     if not path:
-        path = ninia_path + "/app/static/media"
+        path = media_path
     else:
-        path = ninia_path + "/app/static/media/" + path
-
+        path = media_path + nt(path)
     if os.path.exists(path) and os.path.isdir(path):
-        with open('app/config/permissions.json') as permission_file:
-            permitted_dirs = json.load(permission_file)["directories"]["index"]
-
-        return json.dumps({rel_path: get_scheme(path, permitted_dirs=permitted_dirs)},
+        return json.dumps({rel_path: get_scheme(path,
+                                permitted_dirs=get_config("permissions")
+                                ["directories"]["index"])},
                           ensure_ascii=False, indent=4, sort_keys=True)
     else:
         return {}
@@ -115,6 +148,9 @@ def get_scheme(path, restricted=True, permitted_dirs=[]):
     :param permitted_dirs: list of permitted directories
     :return: dictionary in json format
     """
+    path = nt(path)
+    permitted_dirs = [nt(pdir) for pdir in permitted_dirs]
+    
     if restricted:
         for directory in permitted_dirs:
             if directory in path:
@@ -146,40 +182,6 @@ def get_type(file):
     return str(None)
 
 
-# todo: scans the same directory multiple times. Find reason and fix.
-def read_scheme(path="", entries={}, file_types={}):
-    """
-    Scans scheme for files dividing them into categories
-    :param path: root directory to scan
-    :param entries: a dict: keys are file types (audio, video) and val are lists
-    :param file_types: supported file types
-    :return: dictionary with files with files sorted in categories (audio, video..)
-    """
-    app_path = ninia_path + "/app/"
-    scheme = get_scheme(app_path + "static/media" + path, restricted=False)
-    if not file_types:
-        file_types = get_permitted_formats()
-
-    for folder in scheme["folders"]:
-        for file_type in file_types:
-            try:
-                entries = read_scheme(path + "/" + folder,
-                                      entries=entries, file_types=file_types)
-            except KeyError as ke:
-                pass
-
-    for file in scheme["files"]:
-        for file_type in file_types:
-            if file_type in get_type(file):
-                    try:
-                        if not path + "/" + file in entries[file_type]:
-                            # raise
-                            entries[file_type].append(path + "/" + file)
-                    except:
-                        entries[file_type] = [path + "/" + file]
-    return entries
-
-
 def remove(path):
     """
     removes path and everything contained in it
@@ -192,7 +194,8 @@ def remove(path):
 
     if path[0] == '/':
         path = path[1:]
-    path = ninia_path + "/app/static/media/" + path
+    path = media_path + '/' + nt(path)
+    print(path)
     try:
         if os.path.isfile(path):
             os.remove(path)
@@ -214,7 +217,7 @@ def rename(old, new):
     """
     if old != "None" and new != "None":
 
-        if os.path.isfile(ninia_path + "/app/static/media/" + old):
+        if os.path.isfile(media_path + nt('/' + old)):
 
             if old.split(".")[-1].lower() == new.split(".")[
                 -1].lower() and len(
@@ -227,15 +230,15 @@ def rename(old, new):
                             [x + '/' for x in new.split('/')[0:-1]]))
 
                     os.rename(
-                        ninia_path + "/app/static/media/" + old,
-                        ninia_path + "/app/static/media/" + new
+                        media_path + nt('/' + old),
+                        media_path + nt('/' + new)
                     )
-                    clean_dir(ninia_path + "/app/static/media")
+                    clean_dir(media_path)
                     return ""
 
-                except Exception as ex:
-                    clean_dir(ninia_path + "/app/static/media")
-                    # System error
+                except Exception:
+                    clean_dir(media_path)
+                    # Unexpected error
                     return json.dumps({"error": "0"})
             else:
                 # Invalid filename
@@ -263,21 +266,19 @@ def upload(file, folder):
 
     filename = secure_filename(file.filename)
     filename = folder + "/" + filename
-    temp_path = upload_folder
-
 
     if not folder.split('/')[0].lower().strip() in get_config("permissions")[
-        "reserved words"]:
+            "reserved words"]:
         # create necessary folders
         if len(folder.split('/')) > 1:
             makedirs(''.join([x + '/' for x in folder.split('/')[0:-1]]))
 
         # save file in abspath
         try:
-            file.save(''.join([upload_folder] + [
-                "/" + x for x in filename.split('/')]))
-        except:
-            # System Error
+            file.save(nt(''.join([upload_folder] + [
+                "/" + x for x in filename.split('/')])))
+        except Exception:
+            # Unexpected error
             return json.dumps({"error": "0"})
         # function that removes all empty directories
         clean_dir(upload_folder)

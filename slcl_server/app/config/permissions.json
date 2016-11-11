@@ -1,10 +1,11 @@
 {
   "directories" : {
-    "index": ["ninia_server/app/static/media"]
+    "index": ["slcl_server/app/media"]
   },
   "formats": {
     "application": {
       "pdf": "pdf",
+      "js": "javascript",
       "json": "json"
     },
     "audio": {
@@ -18,9 +19,12 @@
       "jpeg": "jpeg"
     },
     "text": {
-      "html": "html"
+      "html": "html",
+      "css": "css"
     },
     "video": {
+      "avi": "avi",
+      "mkv": "mkv",
       "mp4": "mp4",
       "ogv": "ogg",
       "webm": "webm"
@@ -28,6 +32,7 @@
   },
   "reserved words": [
     "antigravity",
+    "display",
     "download",
     "errors",
     "favicon.ico",

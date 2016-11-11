@@ -1,7 +1,8 @@
 # !/usr/bin/python3
 # -*- coding: utf-8 -*-
 
-from app.config.constants import ninia_path
+from app.config.constants import app_path, media_path
+from app.utils import nt
 from flask import Flask, render_template, request, send_from_directory
 from flask_autoindex import AutoIndex
 import json
@@ -10,7 +11,7 @@ import os
 
 
 app = Flask(__name__)
-AutoIndex(app,browse_root=ninia_path + "/app/static/media", add_url_rules=True)
+AutoIndex(app, browse_root=media_path, add_url_rules=True)
 
 
 # ignore this one
@@ -31,7 +32,7 @@ def antigravity():
 # Returns error codes and descriptions
 @app.route("/errors")
 def errors():
-    with open(ninia_path + "/app/config/errors.json", 'r') as error_list:
+    with open(app_path + nt("/config/errors.json"), 'r') as error_list:
         return error_list.read()
 
 
@@ -58,20 +59,20 @@ def list_root():
     """
     :return: json of root media folder
     """
-    index = modules.get_index()
-    return index if index else json.dumps({"error": "4"})
+    rindex = modules.get_index()
+    return rindex if rindex else json.dumps({"error": "4"})
 
 
 # returns json of dir
-@app.route("/listdir/<path:dir>")
-def list_dir(dir):
+@app.route("/listdir/<path:directory>")
+def list_dir(directory):
     """
     json of specified directory
-    :param dir: directory to be shown
+    :param directory: directory to be shown
     :return: json of the structure of the directory
     """
-    index = modules.get_index(dir)
-    return index if index else json.dumps({"error": "4"})  # Not a directory
+    dindex = modules.get_index(directory)
+    return dindex if dindex else json.dumps({"error": "4"})  # Not a directory
 
 
 # root directory
@@ -84,17 +85,17 @@ def menu():
     return modules.gen_menu_abslist()
 
 
-# plays media, allows to input file in url
-# todo: decent html interface
-@app.route("/play/<path:file>")
-def open_media(file):
+# pview allowed file in html template
+# todo: decent html interface, working media controls
+@app.route("/display/<path:file>")
+def display(file):
     """
     like "/view" but with html interface
     :param file: file to be visualized
     :return: html template with file
     """
-
-    with open(ninia_path + "/app/config/permissions.json", "r") as format_file:
+    file = nt(file)
+    with open(nt(app_path + "/config/permissions.json"), "r") as format_file:
         file_formats = json.load(format_file)["formats"]
 
     for file_type in file_formats:
@@ -126,22 +127,6 @@ def rename():
     return modules.rename(old, new)
 
 
-@app.route("/view/<path:path>")
-def view(path):
-    """
-    Sends file specified in uri
-    :return: requested file
-    """
-
-    if os.path.isfile(ninia_path + "/app/static/media/" + path):
-        return send_from_directory(
-            ninia_path + "/app/static/media/" + ''.join(
-                path.split('/')[0:-1]) if '/' in path else '',
-            path.split('/')[-1])
-    else:
-        return json.dumps({"error": "2"})
-
-
 @app.route("/upload", methods=["POST"])
 def upload():
     """
@@ -149,11 +134,32 @@ def upload():
     :return: error if errors were made
     """
     # folder passed as a parameter in the url
-    subfolder = request.args.get("folder").replace('"', '').replace("'", '')
+    subfolder = nt(request.args.get("folder").replace('"', '').replace("'", ''))
     # file of the http post request
     file = request.files["file"]
 
     return modules.upload(file, subfolder)
+
+
+@app.route("/view/<path:path>")
+def view(path):
+    """
+    Sends file specified in uri
+    :return: requested file
+    """
+    print(nt(
+            # path to file folder
+            media_path + '/' + ''.join(path.split('/')[0:-1]) if '/' in path else '') + '/' +
+            # file
+            path.split('/')[-1])
+    if os.path.isfile(nt(media_path + '/' + nt(path))):
+        return send_from_directory(nt(
+            # path to file folder
+            media_path + '/' + ''.join(path.split('/')[0:-1]) if '/' in path else '') + '/',
+            # file
+            path.split('/')[-1])
+    else:
+        return json.dumps({"error": "2"})
 
 
 if __name__ == "__main__":

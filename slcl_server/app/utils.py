@@ -3,7 +3,7 @@ Here we define functions required in modules.py but that are not called from
 app/__init__.py
 """
 
-from app.config.constants import ninia_path
+from app.config.constants import app_path, slcl_path
 import json
 import os
 from shutil import rmtree
@@ -16,9 +16,10 @@ def clean_dir(path):
     :param path: path to be cleaned
     :return:
     """
-    for element in os.listdir(path):
-        if os.path.isdir(path + '/' + element) and not os.listdir(path + '/' + element):
-            rmtree(path + '/' + element)
+    for element in os.listdir(nt(path)):
+        if os.path.isdir(nt(path + '/' + element)) and not os.listdir(
+                nt(path + '/' + element)):
+            rmtree(nt(path + '/' + element))
 
 
 def get_config(json_filename):
@@ -28,10 +29,10 @@ def get_config(json_filename):
     :return: dict of the json file
     """
     try:
-        with open(os.path.dirname(os.path.abspath(__file__)) + "/config/" +
-                          json_filename + ".json", 'r') as file:
+        with open(nt(app_path + "/config/" + json_filename + ".json"),
+                  'r') as file:
             return json.load(file)
-    except FileNotFoundError as fnfe:
+    except FileNotFoundError:
         return {"error": "0"}
 
 
@@ -63,7 +64,7 @@ def makedirs(path, _prevpath=""):
     Creates full path passed as parameter
     :param path: complete path to be created
     :param _prevpath: empty
-    :return:
+    :return: error if errors were made
     """
     if path[-1] == '/':
         path = path[0:-1]
@@ -71,18 +72,27 @@ def makedirs(path, _prevpath=""):
     if '/' in path:
         dirlist = path.split("/")
         try:
-            os.mkdir(ninia_path + "/app/static/media/" +
-                     str(_prevpath) + secure_filename(dirlist[0]))
+            os.mkdir(nt(slcl_path + "/app/static/media/" +
+                     str(_prevpath) + secure_filename(dirlist[0])))
         except FileExistsError:
             pass
         if not error:
             error = makedirs(path=''.join(
                 [x + '/' for x in dirlist[1:]]),
-                _prevpath=_prevpath +
-                         ''.join(dirlist[0]))
+                _prevpath=_prevpath + ''.join(dirlist[0]))
     else:
         try:
-            os.mkdir(ninia_path + "/app/static/media/" + _prevpath + '/' + secure_filename(path))
-        except:
+            os.mkdir(nt(slcl_path + "/app/static/media/" + _prevpath + '/'
+                        + secure_filename(path)))
+        except Exception:
             return json.dumps({"error": "0"})
     return error
+
+
+def nt(path):
+    """
+    Takes a path with '/' separators and returns the correct one for the OS
+    :param path: path to be corrected
+    :return: usable path
+    """
+    return path.replace('/', '\\') if os.name == "nt" else path
