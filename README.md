@@ -9,6 +9,7 @@ SlothCloud is a RESTful server for storing and sharing media files made using Fl
 
 ### Work In Progress:
 *   More file types support
+*   NT support
 
 ### Future work:
 *   Client for the API
@@ -18,7 +19,7 @@ SlothCloud is a RESTful server for storing and sharing media files made using Fl
 *   Flask for Python3 [Flask.pocoo.org](http://flask.pocoo.org/)
 
 ## Useful Information
-I checked it in Raspbian and other Debian-based distros, no love for MacOS or Windows sorry :(
+Tested on Unix (Debian) and Windows
 
 All sample files have been downloaded from [Internet Archive](https://archive.org) and fall under Public Domain
 
