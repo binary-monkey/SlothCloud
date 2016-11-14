@@ -8,7 +8,7 @@ The goal of this file is to have here the functions app/__init__.py uses
 so that file can be read with no difficulties.
 """
 
-from app.config.constants import app_path, host, media_path, port, upload_folder
+from app.config.constants import host, media_path, port, upload_folder
 from app.utils import get_permitted_formats, nt
 import json
 import os
@@ -180,6 +180,12 @@ def get_type(file):
                 if extension == ext:
                     return file_type + "/" + ext
     return str(None)
+
+
+def has_no_empty_params(rule):
+    defaults = rule.defaults if rule.defaults is not None else ()
+    arguments = rule.arguments if rule.arguments is not None else ()
+    return len(defaults) >= len(arguments)
 
 
 def remove(path):

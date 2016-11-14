@@ -3,7 +3,7 @@
 
 from app.config.constants import app_path, media_path
 from app.utils import nt
-from flask import Flask, render_template, request, send_from_directory
+from flask import Flask, render_template, request, send_from_directory, url_for
 from flask_autoindex import AutoIndex
 import json
 import modules
@@ -44,6 +44,37 @@ def favicon():
                                mimetype='image/vnd.microsoft.icon')
 
 
+# pview allowed file in html template
+# todo: decent html interface, working media controls
+@app.route("/display/<path:file>")
+def display(file):
+    """
+    like "/view" but with html interface
+    :param file: file to be visualized
+    :return: html template with file
+    """
+    file = nt(file)
+    with open(nt(app_path + "/config/permissions.json"), "r") as format_file:
+        file_formats = json.load(format_file)["formats"]
+
+    for file_type in file_formats:
+        if file_type in modules.get_type(file):
+            return render_template("dynamic.html", ftype=file_type, path=file)
+
+    return render_template("default.html")
+
+
+# remove file
+@app.route("/remove/<path:path>")
+def remove(path):
+    """
+    removes file or directory (rmtree) specified in path
+    :param path: path to be removed
+    :return: error if errors were made
+    """
+    return modules.remove(path)
+
+
 # root directory
 @app.route("/index.json")
 def index():
@@ -75,6 +106,20 @@ def list_dir(directory):
     return dindex if dindex else json.dumps({"error": "4"})  # Not a directory
 
 
+@app.route("/map")
+def map():
+    """
+    Map of the site
+    :return: a list of all the routes and associated functions of the API
+    """
+    links = []
+    for rule in app.url_map.iter_rules():
+        if "GET" in rule.methods and modules.has_no_empty_params(rule):
+            url = url_for(rule.endpoint, **(rule.defaults or {}))
+            links.append((url, rule.endpoint))
+    return json.dumps(links)
+
+
 # root directory
 @app.route("/menu")
 def menu():
@@ -83,37 +128,6 @@ def menu():
     :return: main html menu
     """
     return modules.gen_menu_abslist()
-
-
-# pview allowed file in html template
-# todo: decent html interface, working media controls
-@app.route("/display/<path:file>")
-def display(file):
-    """
-    like "/view" but with html interface
-    :param file: file to be visualized
-    :return: html template with file
-    """
-    file = nt(file)
-    with open(nt(app_path + "/config/permissions.json"), "r") as format_file:
-        file_formats = json.load(format_file)["formats"]
-
-    for file_type in file_formats:
-        if file_type in modules.get_type(file):
-            return render_template("dynamic.html", ftype=file_type, path=file)
-
-    return render_template("default.html")
-
-
-# remove file
-@app.route("/remove/<path:path>")
-def remove(path):
-    """
-    removes file or directory (rmtree) specified in path
-    :param path: path to be removed
-    :return: error if errors were made
-    """
-    return modules.remove(path)
 
 
 # move/rename file
