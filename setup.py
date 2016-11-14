@@ -7,5 +7,5 @@ setup(name="NiniaServer", version="0.1",
       carlos_lago2@protonmail.com;
       mikelsolabarrieta@protonmail.com;
       rafaelromonsagredo@protonmail.com""",
-      url="https://github.com/RafaelRomon/Ninia",
+      url="https://github.com/Ninia/SlothCloud",
       install_requires=["flask", "Flask-AutoIndex"])
