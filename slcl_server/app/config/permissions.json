@@ -19,8 +19,9 @@
       "jpeg": "jpeg"
     },
     "text": {
+      "css": "css",
       "html": "html",
-      "css": "css"
+      "srt": "plain"
     },
     "video": {
       "avi": "avi",
@@ -32,10 +33,13 @@
   },
   "reserved words": [
     "antigravity",
+    "css",
     "display",
     "download",
     "errors",
     "favicon.ico",
+    "fonts",
+    "get",
     "index",
     "listdir",
     "map",

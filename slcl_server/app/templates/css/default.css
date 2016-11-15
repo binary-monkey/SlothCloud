@@ -1,0 +1,22 @@
+@font-face {
+    font-family: "Existence-Light";
+    src: url("{{ url_for( 'fonts', filename='Existence-Light.ttf' ) }}")
+    format("truetype");
+}
+
+body {
+    background: #2C2C2C;
+    font-family: "Existence-Light", sans-serif;
+}
+
+a {
+    color: #01DF3A
+}
+
+h1 {
+    color: #ABB2BF;
+}
+
+p {
+    color: #ABB2BF;
+}

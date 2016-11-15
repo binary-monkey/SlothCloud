@@ -50,8 +50,6 @@ def absolute_list(path="", entries={}, file_types={}):
     return entries
 
 
-
-
 def gen_menu_abslist():
     """
     Autogenerates a menu with the media files stored in app/static/media/

@@ -29,22 +29,13 @@ def antigravity():
     """)
 
 
-# Returns error codes and descriptions
-@app.route("/errors")
-def errors():
-    with open(app_path + nt("/config/errors.json"), 'r') as error_list:
-        return error_list.read()
+@app.route("/css")
+def css():
+    return render_template(app_path +
+                           nt("/templates/css/" + request.args.get("filename")))
 
 
-# webpage icon
-@app.route('/favicon.ico')
-def favicon():
-    return send_from_directory(os.path.join(app.root_path, 'static'),
-                               'favicon.ico',
-                               mimetype='image/vnd.microsoft.icon')
-
-
-# pview allowed file in html template
+# view allowed file in html template
 # todo: decent html interface, working media controls
 @app.route("/display/<path:file>")
 def display(file):
@@ -64,15 +55,25 @@ def display(file):
     return render_template("default.html")
 
 
-# remove file
-@app.route("/remove/<path:path>")
-def remove(path):
-    """
-    removes file or directory (rmtree) specified in path
-    :param path: path to be removed
-    :return: error if errors were made
-    """
-    return modules.remove(path)
+# Returns error codes and descriptions
+@app.route("/errors")
+def errors():
+    with open(app_path + nt("/config/errors.json"), 'r') as error_list:
+        return error_list.read()
+
+
+# webpage icon
+@app.route('/favicon.ico')
+def favicon():
+    return send_from_directory(os.path.join(app.root_path, 'static'),
+                               'favicon.ico',
+                               mimetype='image/vnd.microsoft.icon')
+
+
+@app.route("/fonts")
+def fonts():
+    return send_from_directory(app_path + nt("/templates/fonts"),
+                               request.args.get("filename"))
 
 
 # root directory
@@ -130,6 +131,17 @@ def menu():
     return modules.gen_menu_abslist()
 
 
+# remove file
+@app.route("/remove/<path:path>")
+def remove(path):
+    """
+    removes file or directory (rmtree) specified in path
+    :param path: path to be removed
+    :return: error if errors were made
+    """
+    return modules.remove(path)
+
+
 # move/rename file
 @app.route("/rename")
 def rename():
@@ -147,6 +159,9 @@ def upload():
     Used to upload files to server
     :return: error if errors were made
     """
+
+    # todo: should we check if file existed or is it better to overwrite?
+
     # folder passed as a parameter in the url
     subfolder = nt(request.args.get("folder").replace('"', '').replace("'", ''))
     # file of the http post request
@@ -161,15 +176,11 @@ def view(path):
     Sends file specified in uri
     :return: requested file
     """
-    print(nt(
-            # path to file folder
-            media_path + '/' + ''.join(path.split('/')[0:-1]) if '/' in path else '') + '/' +
-            # file
-            path.split('/')[-1])
     if os.path.isfile(nt(media_path + '/' + nt(path))):
         return send_from_directory(nt(
             # path to file folder
-            media_path + '/' + ''.join(path.split('/')[0:-1]) if '/' in path else '') + '/',
+            media_path + '/' + ''.join(
+                path.split('/')[0:-1]) if '/' in path else '') + '/',
             # file
             path.split('/')[-1])
     else:
@@ -177,5 +188,4 @@ def view(path):
 
 
 if __name__ == "__main__":
-    modules.get_type(None)
     app.run(host="0.0.0.0", threaded=True)
