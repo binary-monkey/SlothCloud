@@ -2,7 +2,7 @@ import os
 
 
 host = "localhost"
-port = "5000"
+port = "12344"
 
 slcl_path = os.path.dirname(os.path.abspath(__file__)).replace(
     "/app/config" if os.name != "nt" else "\\app\\config", '')
