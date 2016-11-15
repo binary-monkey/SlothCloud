@@ -5,4 +5,4 @@ setup(name="SlothCloud", version="0.1",
       author="Ninia",
       author_email="ninia@protonmail.com",
       url="https://github.com/Ninia/SlothCloud",
-      install_requires=["flask", "Flask-AutoIndex"])
+      install_requires=["flask", "Flask-AutoIndex", "pyopenssl"])
