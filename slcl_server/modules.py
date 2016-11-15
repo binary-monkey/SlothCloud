@@ -10,6 +10,7 @@ so that file can be read with no difficulties.
 
 from app.config.constants import host, media_path, port, upload_folder
 from app.utils import get_permitted_formats, nt
+from flask import url_for
 import json
 import os
 from shutil import rmtree
@@ -61,6 +62,8 @@ def gen_menu_abslist():
     menu_file = """
         <!DOCTYPE html><html lang="en">
         <head><meta charset="UTF-8">
+        <link rel="stylesheet" href=\"""" + \
+                url_for( 'css', filename='default.css' ) + """\">
         <title>Ninia - Main Index</title>
         </head><body><h1>Ninia (in-dev) - Menu</h1>"""
 
@@ -91,6 +94,8 @@ def gen_menu_table():
     menu_file = """
         <!DOCTYPE html><html lang="en">
         <head><meta charset="UTF-8">
+        <link rel="stylesheet" href=\"""" + \
+                url_for( 'css', filename='default.css' ) + """\">
         <title>Ninia - Main Index</title>
         </head><body>
         <TABLE BORDER="5"    WIDTH="50%"   CELLPADDING="4" CELLSPACING="3">

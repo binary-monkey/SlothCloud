@@ -31,8 +31,10 @@ def antigravity():
 
 @app.route("/css")
 def css():
-    return render_template(app_path +
-                           nt("/templates/css/" + request.args.get("filename")))
+    template = render_template(nt("css/" + request.args.get("filename")))
+    with open(app_path + "/templates/rendered/" + request.args.get("filename"), 'w') as f:
+        f.write(template)
+    return send_from_directory(app_path + "/templates/rendered", filename=request.args.get("filename"))
 
 
 # view allowed file in html template
