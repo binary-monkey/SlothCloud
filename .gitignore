@@ -4,3 +4,7 @@ slcl_server/app/media/*
 !slcl_server/app/media/samples/
 slcl_server/app/templates/menu.html
 slcl_server/app/templates/rendered/*
+slcl_server/app/templates/fonts/NotoSans-Bold.ttf
+slcl_server/app/templates/fonts/NotoSans-BoldItalic.ttf
+slcl_server/app/templates/fonts/NotoSans-Italic.ttf
+slcl_server/app/templates/fonts/NotoSans-Regular.ttf

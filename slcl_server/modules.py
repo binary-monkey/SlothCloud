@@ -69,7 +69,8 @@ def gen_menu_abslist():
 
     for category in sorted(menu_entries.keys()):
         # Category name, first letter is upper
-        menu_file += "\n<h2>" + category[0].upper() + category[1:] + "</h2>"
+        menu_file += "\n<h2>" + \
+                     category[0].upper() + category[1:] + "</h2>"
         # List of all entries in category
         for entry in sorted(menu_entries[category]):
             entry = entry[1:]

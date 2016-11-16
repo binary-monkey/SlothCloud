@@ -1,12 +1,34 @@
 @font-face {
-    font-family: "Existence-Light";
-    src: url("{{ url_for( 'fonts', filename='Existence-Light.ttf' ) }}")
+    font-family: "NotoSans";
+    src: url("{{ url_for( 'fonts', filename='NotoSans-Regular.ttf' ) }}")
     format("truetype");
+}
+
+@font-face {
+    font-family: "NotoSans";
+    src: url("{{ url_for( 'fonts', filename='NotoSans-Bold.ttf' ) }}")
+    format("truetype");
+    font-weight: bold;
+}
+
+@font-face {
+    font-family: "NotoSans";
+    src: url("{{ url_for( 'fonts', filename='NotoSans-BoldItalic.ttf' ) }}")
+    format("truetype");
+    font-style: italic;
+}
+
+@font-face {
+    font-family: "NotoSans";
+    src: url("{{ url_for( 'fonts', filename='NotoSans-Italic.ttf' ) }}")
+    format("truetype");
+    font-weight: bold;
+    font-style: italic;
 }
 
 body {
     background: #2C2C2C;
-    font-family: "Existence-Light", sans-serif;
+    font-family: "NotoSans", sans;
 }
 
 a {
