@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+<link rel="stylesheet" href="{{ url_for('css', filename='default.css' ) }}">
+<title>{{ title }}</title>
+</head>
+<body>
+<h1> Index of: {{ directory }} </h1>
+
+{% if folders|length > 0 %}
+    <h2>Folders:</h2>
+    {% for folder in folders %}
+        <img src="{{ url_for('static', filename="folder.png") }}" width="40" height="40">
+<!-- TODO: align text vertically.-->
+        <a href={{ url_for('menu', path=directory + '/' + folder) }}> {{ folder }}</a>
+        <br>
+    {% endfor %}
+{% endif %}
+
+{% if files|length > 0 %}
+    <h2>Files:</h2>
+    {% for file in files %}
+        <p><a href={{ url_for('display', file=directory + '/' + file) }}> {{ file }} </a></p>
+    {% endfor %}
+{% endif %}
+
+</body>
+</html>

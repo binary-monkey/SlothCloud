@@ -15,7 +15,6 @@
     font-family: "NotoSans";
     src: url("{{ url_for( 'fonts', filename='NotoSans-BoldItalic.ttf' ) }}")
     format("truetype");
-    font-weight: bold;
     font-style: italic;
 }
 
@@ -23,6 +22,7 @@
     font-family: "NotoSans";
     src: url("{{ url_for( 'fonts', filename='NotoSans-Italic.ttf' ) }}")
     format("truetype");
+    font-weight: bold;
     font-style: italic;
 }
 
@@ -31,8 +31,12 @@ body {
     font-family: "NotoSans", sans;
 }
 
-a {
-    color: #01DF3A
+a, a:visited {
+    color: #01DF3A;
+}
+
+a:hover {
+    color: #00A329;
 }
 
 h1 {

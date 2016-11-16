@@ -130,8 +130,13 @@ def menu():
     menu with abspath of all files
     :return: main html menu
     """
-    return modules.gen_menu_abslist()
-
+    path = str(request.args.get("path"))
+    scheme = json.loads(modules.get_index(path if path != "None" else ''))
+    return render_template("menu.html",
+                           directory=path[1:] if path != "None" else '',
+                           files=scheme[''.join(key for key in scheme)]["files"],
+                           folders= scheme[''.join(key for key in scheme)]["folders"],
+                           title="Index")
 
 # remove file
 @app.route("/remove/<path:path>")
@@ -153,6 +158,11 @@ def rename():
     """
     old, new = str(request.args.get("old")), str(request.args.get("new"))
     return modules.rename(old, new)
+
+
+@app.route("/static")
+def get_static():
+    return send_from_directory(app_path + nt('static/' + request.args.get("filename")))
 
 
 @app.route("/upload", methods=["POST"])
@@ -178,6 +188,7 @@ def view(path):
     Sends file specified in uri
     :return: requested file
     """
+
     if os.path.isfile(nt(media_path + '/' + nt(path))):
         return send_from_directory(nt(
             # path to file folder
