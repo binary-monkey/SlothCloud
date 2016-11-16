@@ -15,6 +15,7 @@
     font-family: "NotoSans";
     src: url("{{ url_for( 'fonts', filename='NotoSans-BoldItalic.ttf' ) }}")
     format("truetype");
+    font-weight: bold;
     font-style: italic;
 }
 
@@ -22,7 +23,6 @@
     font-family: "NotoSans";
     src: url("{{ url_for( 'fonts', filename='NotoSans-Italic.ttf' ) }}")
     format("truetype");
-    font-weight: bold;
     font-style: italic;
 }
 
