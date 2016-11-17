@@ -5,16 +5,37 @@
 <title>{{ title }}</title>
 </head>
 <body>
-<h1> Index of: {{ directory }} </h1>
+<div class="button">
+    <!-- TODO: buttons -->
+    <input type="button" value="Previous page" onClick="">
+    <input type="button" value="Upload file" onClick="">
+</div>
+
+{% if root == True %}
+    <h1> Index of: / </h1>
+{% else %}
+    <h1> Index of: {{ directory }} </h1>
+{% endif %}
 
 {% if folders|length > 0 %}
     <h2>Folders:</h2>
-    {% for folder in folders %}
-        <img src="{{ url_for('static', filename="folder.png") }}" width="40" height="40">
-<!-- TODO: align text vertically.-->
-        <a href={{ url_for('menu', path=directory + '/' + folder) }}> {{ folder }}</a>
-        <br>
-    {% endfor %}
+    <table>
+        {% for folder in folders %}
+        <tr>
+            <td>
+                <a href={{ url_for('menu', path=directory + '/' + folder) }}>
+                    <img src="{{ url_for('static', filename="folder.png") }}" width="40" height="40">
+                </a>
+            </td>
+            <td>
+                <a href={{ url_for('menu', path=directory + '/' + folder) }}>
+                    {{ folder }}
+                </a>
+            </td>
+            <br>
+        </tr>
+        {% endfor %}
+    </table>
 {% endif %}
 
 {% if files|length > 0 %}

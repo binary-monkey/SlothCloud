@@ -132,10 +132,14 @@ def menu():
     """
     path = str(request.args.get("path"))
     scheme = json.loads(modules.get_index(path if path != "None" else ''))
+
     return render_template("menu.html",
                            directory=path[1:] if path != "None" else '',
-                           files=scheme[''.join(key for key in scheme)]["files"],
-                           folders= scheme[''.join(key for key in scheme)]["folders"],
+                           files=sorted(scheme[''.join(key for key in scheme)]["files"],
+                                        key=lambda s: s.lower()),
+                           folders=sorted(scheme[''.join(key for key in scheme)]["folders"],
+                                          key=lambda s: s.lower()),
+                           root=True if path == "None" else False,
                            title="Index")
 
 # remove file
