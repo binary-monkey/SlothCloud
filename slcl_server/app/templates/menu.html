@@ -2,14 +2,43 @@
 <html lang='en'>
 <head>
 <link rel="stylesheet" href="{{ url_for('css', filename='default.css' ) }}">
+<link rel="stylesheet" href="{{ url_for('css', filename='contextmenu.css' ) }}">
 <title>{{ title }}</title>
 </head>
-<body>
+<body oncontextmenu="return false">
 <div class="button">
     <!-- TODO: buttons -->
     <input type="button" value="Previous page" onClick="">
-    <input type="button" value="Upload file" onClick="">
+    <input type="button" value="Create folder" onClick="">
+    <input type="button" value="Upload file"
+           onClick="window.location = '{{ url_for('templates', path='upload.html') }}'">
 </div>
+
+<!-- TODO: WhY DoEs NoT iT wOrK-->
+<div style="display:none; "   id="contextMenu">
+    <table  border="0" cellpadding="0" cellspacing="0"
+        style="border: thin solid #808080; cursor: default;" width="100px"
+        bgcolor="White">
+        <tr>
+            <td >
+                <div  class="ContextItem">Rename</div>
+            </td>
+        </tr>
+        <tr>
+            <td >
+            <div  class="ContextItem">Save</div>
+            </td>
+        </tr>
+        <tr>
+            <td >
+                <div  class="ContextItem">View</div>
+            </td>
+        </tr>
+    </table>
+</div>
+
+<script src="{{ url_for('js', path='contextmenu.js') }}"></script>
+
 
 {% if root == True %}
     <h1> Index of: / </h1>
@@ -28,9 +57,14 @@
                 </a>
             </td>
             <td>
-                <a href={{ url_for('menu', path=directory + '/' + folder) }}>
-                    {{ folder }}
-                </a>
+            <a href={{ url_for('menu', path=directory + '/' + folder) }}>
+               <div  onmousedown="HideMenu('contextMenu');"
+                     onmouseup="HideMenu('contextMenu');"
+                     oncontextmenu="ShowMenu('contextMenu',event);"
+                     class="detailItem">
+                        {{ folder }}
+               </div>
+             </a>
             </td>
             <br>
         </tr>
@@ -41,7 +75,15 @@
 {% if files|length > 0 %}
     <h2>Files:</h2>
     {% for file in files %}
-        <p><a href={{ url_for('display', file=directory + '/' + file) }}> {{ file }} </a></p>
+       <div  onmousedown="HideMenu('contextMenu');"
+             onmouseup="HideMenu('contextMenu');"
+             oncontextmenu="ShowMenu('contextMenu',event);"
+             class="detailItem">
+                <p>
+                    <a href={{ url_for('display', file=directory + '/' + file) }}> {{ file }}
+                    </a>
+                </p>
+       </div>
     {% endfor %}
 {% endif %}
 

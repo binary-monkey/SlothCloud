@@ -1,0 +1,13 @@
+.ContextItem {
+    background-color: #2C2C2C;
+    color: #ABB2BF;
+    font-weight:normal;
+}
+
+.ContextItem:hover {
+    background-color:#0066FF;
+    color: #ABB2BF;
+    font-weight:bold;
+}
+
+

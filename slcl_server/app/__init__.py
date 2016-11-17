@@ -87,6 +87,11 @@ def index():
     return modules.get_index()
 
 
+@app.route("/js/<path:path>")
+def js(path):
+    return render_template("js/" + path)
+
+
 # returns json of dir
 @app.route("/listdir")
 def list_root():
@@ -167,6 +172,11 @@ def rename():
 @app.route("/static")
 def get_static():
     return send_from_directory(app_path + nt('static/' + request.args.get("filename")))
+
+
+@app.route("/templates/<path:path>")
+def templates(path):
+    return render_template(nt(path))
 
 
 @app.route("/upload", methods=["POST"])
