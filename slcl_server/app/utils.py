@@ -3,7 +3,7 @@ Here we define functions required in modules.py but that are not called from
 app/__init__.py
 """
 
-from app.config.constants import app_path, slcl_path
+from app.config.constants import app_path, media_path
 import json
 import os
 from shutil import rmtree
@@ -72,8 +72,9 @@ def makedirs(path, _prevpath=""):
     if '/' in path:
         dirlist = path.split("/")
         try:
-            os.mkdir(nt(slcl_path + "/app/static/media/" +
-                     str(_prevpath) + secure_filename(dirlist[0])))
+            os.mkdir(nt(media_path + "/" +
+                     str(_prevpath)  + secure_filename(dirlist[0])))
+
         except FileExistsError:
             pass
         if not error:
@@ -82,10 +83,11 @@ def makedirs(path, _prevpath=""):
                 _prevpath=_prevpath + ''.join(dirlist[0]))
     else:
         try:
-            os.mkdir(nt(slcl_path + "/app/static/media/" + _prevpath + '/'
+            os.mkdir(nt(media_path + "/" + _prevpath + '/'
                         + secure_filename(path)))
         except Exception:
             return json.dumps({"error": "0"})
+
     return error
 
 

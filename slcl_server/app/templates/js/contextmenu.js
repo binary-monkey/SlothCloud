@@ -1,3 +1,6 @@
+/*
+ * TODO: Hide contextmenu when not hover or in contextmenu.
+ */
 function ShowMenu(control, e) {
      // left position of pointer
     var posx = e.clientX +window.pageXOffset +'px';
@@ -9,6 +12,5 @@ function ShowMenu(control, e) {
     document.getElementById(control).style.top = posy;
 }
 function HideMenu(control) {
-
     document.getElementById(control).style.display = 'none';
 }

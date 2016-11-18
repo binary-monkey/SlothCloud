@@ -8,6 +8,7 @@ from flask_autoindex import AutoIndex
 import json
 import modules
 import os
+from utils import makedirs as mkd
 
 
 app = Flask(__name__)
@@ -114,6 +115,16 @@ def list_dir(directory):
     return dindex if dindex else json.dumps({"error": "4"})  # Not a directory
 
 
+# Create directory
+@app.route("/makedir")
+def makedir():
+    if not str(request.args.get('dirname')) in ("None", "") :
+        err = mkd(request.args.get('dirname'))
+        return err if err else ''
+
+    return '{"error":"3"}'
+
+
 @app.route("/map")
 def map():
     """
@@ -136,14 +147,20 @@ def menu():
     :return: main html menu
     """
     path = str(request.args.get("path"))
-    scheme = json.loads(modules.get_index(path if path != "None" else ''))
+    scheme = json.loads(str(modules.get_index(path if path != "None" else '')))
+
+    if len(path.split('/')) <= 1:
+        prevdir = ''
+    else:
+        prevdir = ''.join(['/' + x for x in path.split('/')[:-1]])
 
     return render_template("menu.html",
-                           directory=path[1:] if path != "None" else '',
+                           directory=path if path != "None" else '',
                            files=sorted(scheme[''.join(key for key in scheme)]["files"],
-                                        key=lambda s: s.lower()),
+                                        key=lambda s: s.lower()) if scheme else [],
                            folders=sorted(scheme[''.join(key for key in scheme)]["folders"],
-                                          key=lambda s: s.lower()),
+                                          key=lambda s: s.lower()) if scheme else [],
+                           prevdir='' if path else '',
                            root=True if path == "None" else False,
                            title="Index")
 
@@ -203,7 +220,7 @@ def view(path):
     :return: requested file
     """
 
-    if os.path.isfile(nt(media_path + '/' + nt(path))):
+    if path and os.path.isfile(nt(media_path + '/' + nt(path))):
         return send_from_directory(nt(
             # path to file folder
             media_path + '/' + ''.join(
