@@ -1,10 +1,16 @@
 function makedir(prevdir){
+    // remove '/' as first element of prevdir
     if (prevdir != "") {
         prevdir = prevdir.substr(prevdir.length - (prevdir.length - 1))
         prevdir += '/';
     }
-
-    var dirname = prevdir + prompt("Name of the folder to be created:");
+    var enddir = prompt("Name of the folder to be created:");
+    enddir = enddir.replace(/[^\w\s]/gi, ''); // remove all unsafe characters
+    if (enddir == ''){
+        alert("Invalid folder name.");
+        return;
+    }
+    var dirname = prevdir + enddir;
     var request = new XMLHttpRequest();
     request.onreadystatechange = function() {
         if (request.readyState === 4) {

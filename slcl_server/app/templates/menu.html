@@ -3,7 +3,14 @@
 <head>
 <link rel="stylesheet" href="{{ url_for('css', filename='default.css' ) }}">
 <link rel="stylesheet" href="{{ url_for('css', filename='contextmenu.css' ) }}">
+
+
+<!--<script  type="text/javascript"-->
+    <!--src="http://code.jquery.com/jquery-1.9.0.min.js">-->
+<!--</script>-->
+<script src="{{ url_for('js', path='jquery-3.1.1.slim.min.js') }}"></script>
 <script src="{{ url_for('js', path='makedir.js') }}"></script>
+<script src="{{ url_for('js', path='rename.js') }}"></script>
 
 <title>{{ title }}</title>
 </head>
@@ -32,7 +39,8 @@ TODO: Automatically hide contextmenu.
         </tr>
         <tr>
             <td >
-                <div  class="ContextItem" onclick="alert('hOI!!!')">Rename</div>
+                <!--<div  class="ContextItem" onclick="alert('hOI!!!')">Rename</div>-->
+                <div  class="ContextItem" onclick="rename('{{ directory }}/{{ file }}')">Rename</div>
             </td>
         </tr>
         <tr>
@@ -47,7 +55,7 @@ TODO: Automatically hide contextmenu.
         </tr>
         <tr>
             <td >
-                <div  class="ContextItem">Cancel</div>
+                <div  class="ContextItem" onclick="window.location = window.location;">Cancel</div>
             </td>
         </tr>
     </table>

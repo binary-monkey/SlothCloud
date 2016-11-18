@@ -147,8 +147,10 @@ def menu():
     :return: main html menu
     """
     path = str(request.args.get("path"))
-    scheme = json.loads(str(modules.get_index(path if path != "None" else '')))
 
+    scheme = json.loads(str(modules.get_index(path if path != "None" else '')))
+    if len(path) > 0 and path[0] == '/':
+        path = path[1:]
     if len(path.split('/')) <= 1:
         prevdir = ''
     else:
