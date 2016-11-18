@@ -2,6 +2,14 @@
  * TODO: Hide contextmenu when not hover or in contextmenu.
  */
 function ShowMenu(control, e) {
+    $(document).mousedown(function(event) {
+        if( e.button == 2 ) {
+        auxtext = $(event.target).text();
+            if (auxtext != "Rename")
+                text = auxtext.replace(/^\s+|\s+$/g, '');
+//                console.log(text)
+        }
+    });
      // left position of pointer
     var posx = e.clientX +window.pageXOffset +'px';
     // top position of pointer

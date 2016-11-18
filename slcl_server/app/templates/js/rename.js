@@ -2,14 +2,14 @@ function rename(oldf){
     /*
      * TODO: Fix jQuery so it knows where the mouse right-clicked
      */
-    $(document).click(function(event) {
-        var text = $(event.target).text();
-    });
-
+    oldf += get_text();
+    console.log("oldf:")
+    console.log(oldf.replace(/[^\w\s]/gi, ''))
     if (oldf.replace(/[^\w\s]/gi, '') == "") {
         alert("Incorrect file.");
         return;
     }
+    console.log(oldf)
     var permitted_chars = " /-_.";
     var newf = prompt("New relative path (name) to file:");
     newf = newf.replace(/[\w\s].concat([permitted_chars])/gi, ''); // remove all unsafe characters
@@ -32,9 +32,11 @@ function rename(oldf){
             }
         }
     };
-    console.log( "{{ url_for('rename', old=oldf, new=newf) }}" );
-    var furl = oldf + text;
-    var err = request.open("GET", "{{ url_for('rename', old=furl, new=newf)}}" , true);
+    var furl = oldf;
+    console.log("OLDF: " + oldf)
+    console.log("NEWF: " + newf)
+    console.log( "{{ url_for('rename', old='') }}" + oldf + "&new=" + newf);
+    var err = request.open("GET", "{{ url_for('rename', old='') }}" + oldf + "&new=" + newf, true);
     request.send(null);
     window.location = window.location;
 }
