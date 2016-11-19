@@ -1,7 +1,6 @@
 function rename(oldf){
-    /*
-     * TODO: Fix jQuery so it knows where the mouse right-clicked
-     */
+    if (get_text() == "")
+        return;
     oldf += get_text();
     console.log("oldf:")
     console.log(oldf.replace(/[^\w\s]/gi, ''))
