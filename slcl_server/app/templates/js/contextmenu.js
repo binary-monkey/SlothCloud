@@ -10,6 +10,8 @@ function ShowMenu(control, e) {
 //                console.log(text)
         }
     });
+    if (get_text() == "")
+    return;
      // left position of pointer
     var posx = e.clientX +window.pageXOffset +'px';
     // top position of pointer

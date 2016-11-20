@@ -15,7 +15,14 @@ from utils import makedirs as mkd
 app = Flask(__name__)
 AutoIndex(app, browse_root=media_path, add_url_rules=True)
 
-""" Basic Resources """
+
+#
+#
+#
+# Basic Resources
+#
+#
+#
 
 
 # Returns error codes and descriptions
@@ -25,20 +32,6 @@ def errors():
         return error_list.read()
 
 
-# webpage icon
-@app.route('/favicon.ico')
-def favicon():
-    return send_from_directory(os.path.join(app.root_path, 'static'),
-                               'favicon.ico',
-                               mimetype='image/vnd.microsoft.icon')
-
-
-@app.route("/fonts")
-def fonts():
-    return send_from_directory(app_path + nt("/templates/fonts"),
-                               request.args.get("filename"))
-
-
 # root directory
 @app.route("/index.json")
 def index():
@@ -46,11 +39,6 @@ def index():
     :return: json of index
     """
     return modules.get_index()
-
-
-@app.route("/js/<path:path>")
-def js(path):
-    return render_template("js/" + path)
 
 
 # returns json of dir
@@ -89,7 +77,89 @@ def map_site():
     return json.dumps(links)
 
 
-""" Menu """
+#
+#
+#
+# File Obtention
+#
+#
+#
+
+
+@app.route("/view/<path:path>")
+def view(path):
+    """
+    Sends file specified in url
+    :return: requested file
+    """
+
+    if path and os.path.isfile(nt(media_path + '/' + nt(path))):
+        return send_from_directory(nt(
+            # path to file folder
+            media_path + '/' + ''.join(
+                path.split('/')[0:-1]) if '/' in path else '') + '/',
+                                   # file
+                                   path.split('/')[-1])
+    else:
+        return json.dumps({"error": "2"})
+
+
+#
+#
+#
+# Web Resources
+#
+#
+#
+
+
+@app.route("/css")
+def css():
+    template = render_template(nt("css/" + request.args.get("filename")))
+    with open(app_path + "/templates/rendered/" + request.args.get("filename"),
+              'w') as f:
+        f.write(template)
+    return send_from_directory(app_path + "/templates/rendered",
+                               filename=request.args.get("filename"))
+
+
+# view allowed file in html template
+# todo: decent html interface, working media controls
+@app.route("/display/<path:file>")
+def display(file):
+    """
+    like "/view" but with html interface
+    :param file: file to be visualized
+    :return: html template with file
+    """
+    file = nt(file)
+    with open(nt(app_path + "/config/permissions.json"), "r") as format_file:
+        file_formats = json.load(format_file)["formats"]
+
+    for file_type in file_formats:
+        if file_type in modules.get_type(file):
+            return render_template("dynamic.html", ftype=file_type, path=file)
+
+    return render_template("default.html")
+
+
+# webpage icon
+@app.route('/favicon.ico')
+def favicon():
+    return send_from_directory(os.path.join(app.root_path, 'static'),
+                               'favicon.ico',
+                               mimetype='image/vnd.microsoft.icon')
+
+
+@app.route("/fonts")
+def fonts():
+    return send_from_directory(app_path + nt("/templates/fonts"),
+                               request.args.get("filename"))
+
+
+@app.route("/js/<path:path>")
+def js(path):
+    return render_template("js/" + path)
 
 
 # root directory
@@ -123,54 +193,10 @@ def menu():
                            title="Index")
 
 
-""" Display Operations """
-
-
-@app.route("/view/<path:path>")
-def view(path):
-    """
-    Sends file specified in url
-    :return: requested file
-    """
-
-    if path and os.path.isfile(nt(media_path + '/' + nt(path))):
-        return send_from_directory(nt(
-            # path to file folder
-            media_path + '/' + ''.join(
-                path.split('/')[0:-1]) if '/' in path else '') + '/',
-                                   # file
-                                   path.split('/')[-1])
-    else:
-        return json.dumps({"error": "2"})
-
-
-# view allowed file in html template
-# todo: decent html interface, working media controls
-@app.route("/display/<path:file>")
-def display(file):
-    """
-    like "/view" but with html interface
-    :param file: file to be visualized
-    :return: html template with file
-    """
-    file = nt(file)
-    with open(nt(app_path + "/config/permissions.json"), "r") as format_file:
-        file_formats = json.load(format_file)["formats"]
-
-    for file_type in file_formats:
-        if file_type in modules.get_type(file):
-            return render_template("dynamic.html", ftype=file_type, path=file)
-
-    return render_template("default.html")
-
-
 @app.route("/static")
 def get_static():
     return send_from_directory(
         app_path + nt('static/' + request.args.get("filename")))
-
-
-""" Basic Operations"""
 
 
 @app.route("/templates/<path:path>")
@@ -178,17 +204,13 @@ def templates(path):
     return render_template(nt(path))
 
 
-@app.route("/css")
-def css():
-    template = render_template(nt("css/" + request.args.get("filename")))
-    with open(app_path + "/templates/rendered/" + request.args.get("filename"),
-              'w') as f:
-        f.write(template)
-    return send_from_directory(app_path + "/templates/rendered",
-                               filename=request.args.get("filename"))
-
-
-""" File Operations """
+#
+#
+#
+# File/Directory Operations
+#
+#
+#
 
 
 # Create directory
@@ -241,7 +263,13 @@ def rename():
     return modules.rename(old, new)
 
 
-""" Random Crap """
+#
+#
+#
+# Other
+#
+#
+#
 
 
 @app.route("/antigravity")
