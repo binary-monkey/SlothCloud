@@ -76,7 +76,7 @@ def list_dir(directory):
 
 
 @app.route("/map")
-def map():
+def map_site():
     """
     Map of the site
     :return: a list of all the routes and associated functions of the API
@@ -118,7 +118,7 @@ def menu():
                                scheme[''.join(key for key in scheme)][
                                    "folders"],
                                key=lambda s: s.lower()) if scheme else [],
-                           prevdir='' if path else '',
+                           prevdir=prevdir,
                            root=True if path == "None" else False,
                            title="Index")
 
