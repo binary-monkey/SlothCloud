@@ -10,6 +10,7 @@ SlothCloud is a RESTful server for storing and sharing media files made using Fl
 ### Work In Progress:
 *   More file types support
 *   NT support
+*   HTTPS support
 
 ### Future work:
 *   Client for the API
