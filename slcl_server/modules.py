@@ -9,12 +9,13 @@ so that file can be read with no difficulties.
 """
 
 from app.config.constants import host, media_path, port, upload_folder
-from app.utils import get_permitted_formats, nt
+from app.utils import clean_dir, get_config, get_permitted_formats, is_allowed,\
+    makedirs, nt
+
 from flask import url_for
 import json
 import os
 from shutil import rmtree
-from utils import clean_dir, get_config, is_allowed, makedirs
 from werkzeug.utils import secure_filename
 
 

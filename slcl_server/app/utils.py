@@ -3,7 +3,7 @@ Here we define functions required in modules.py but that are not called from
 app/__init__.py
 """
 
-from app.config.constants import app_path, media_path
+from .config.constants import app_path, media_path
 import json
 import os
 from shutil import rmtree

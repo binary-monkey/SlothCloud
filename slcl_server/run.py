@@ -3,8 +3,9 @@
 
 from app import app
 from app.config.constants import host, port, app_path
+from app.utils import nt
+
 from sys import argv
-from utils import nt
 
 # Temporary argument-deactivation of https so it works on windows systems.
 if len(argv) > 1 and argv[1] == "-ns":

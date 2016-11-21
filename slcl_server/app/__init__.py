@@ -1,16 +1,17 @@
 # !/usr/bin/python3
 # -*- coding: utf-8 -*-
 
-import json
-import os
+from .config.constants import app_path, media_path
+import modules
+from .utils import nt
+from .utils import makedirs as mkd
 
 from flask import Flask, render_template, request, send_from_directory, url_for
 from flask_autoindex import AutoIndex
 
-import modules
-from app.config.constants import app_path, media_path
-from app.utils import nt
-from utils import makedirs as mkd
+import json
+import os
+
 
 app = Flask(__name__)
 AutoIndex(app, browse_root=media_path, add_url_rules=True)
