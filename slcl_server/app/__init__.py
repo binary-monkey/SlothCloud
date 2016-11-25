@@ -1,4 +1,4 @@
-# !/usr/bin/python3
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
 from .config.constants import app_path, media_path
@@ -44,6 +44,7 @@ def index():
 
 # returns json of dir
 @app.route("/listdir")
+@app.route("/listdir/")
 def list_root():
     """
     :return: json of root media folder
@@ -61,6 +62,7 @@ def list_dir(directory):
     :return: json of the structure of the directory
     """
     dindex = modules.get_index(directory)
+    print(dindex)
     return dindex if dindex else json.dumps({"error": "4"})  # Not a directory
 
 

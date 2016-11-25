@@ -1,4 +1,4 @@
-#!/usr/bin/python3
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
 # todo: reserved file/folder name error
@@ -131,10 +131,11 @@ def get_index(path=""):
     """
     path = nt(path)
     rel_path = path if path else "media"
+    rel_path = rel_path.join(["current path is: '", "'"])
     if not path:
         path = media_path
     else:
-        path = media_path + nt(path)
+        path = media_path + nt('/' + path)
     if os.path.exists(path) and os.path.isdir(path):
         return json.dumps({rel_path: get_scheme(path,
                                 permitted_dirs=get_config("permissions")

@@ -1,3 +1,8 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+
+# TODO: Mikel: Create desktop icon for linux. (and maybe Windows)
+
 from setuptools import setup
 from gen_ssl import create_self_signed_cert
 
