@@ -156,18 +156,23 @@ def get_scheme(path, restricted=True, permitted_dirs=[]):
     """
     path = nt(path)
     permitted_dirs = [nt(pdir) for pdir in permitted_dirs]
-    
-    if restricted:
-        for directory in permitted_dirs:
-            if directory in path:
-                restricted = False
-    return {
-        "folders": {x: get_scheme(path + "/" + x, restricted, permitted_dirs)
-                    for x in os.listdir(path) if os.path.isdir(path + "/" + x)},
-        "files": [x for x in os.listdir(path) if
-                  not os.path.isdir(path + "/" + x)]
-    } if not restricted else {}
 
+    # checks if it's a permitted directory
+    if not True in [directory in path for directory in permitted_dirs]:
+        return {}
+
+    scheme = {
+        "folders": {},
+        "files": []
+    }
+
+    for x in os.listdir(path):
+        if os.path.isdir(path + '/' + x):
+            scheme["folders"][x] = get_scheme(path + "/" + x, restricted, permitted_dirs)
+        elif os.path.isfile(path + "/" + x):
+            scheme["files"].append(x)
+
+    return scheme
 
 def get_type(file):
     """

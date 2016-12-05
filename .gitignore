@@ -1,4 +1,5 @@
 .idea
+dist/
 __pycache__
 slcl_server/app/media/*
 !slcl_server/app/media/samples/
@@ -7,3 +8,4 @@ slcl_server/app/templates/fonts/*
 slcl_server/app/templates/menu.html
 slcl_server/app/static/slcl.key
 slcl_server/app/static/slcl.crt
+

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-from config.constants import static_path
+from .config.constants import static_path
 from os.path import join
 from OpenSSL import crypto
 

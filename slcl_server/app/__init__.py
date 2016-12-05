@@ -9,13 +9,45 @@ from .utils import nt
 import json
 import os
 
-from flask import Flask, render_template, request, send_from_directory, url_for
-from flask_autoindex import AutoIndex
+from flask import escape, Flask, redirect, render_template, request, send_from_directory
+from flask import session, url_for
+# from flask_autoindex import AutoIndex
 
 app = Flask(__name__)
-AutoIndex(app, browse_root=media_path, add_url_rules=True)
+# AutoIndex(app, browse_root=media_path, add_url_rules=True)
 
 
+#
+#
+#
+# Logging Resources
+#
+#
+#
+
+@app.route('/')
+def logged():
+    if "username" in session:
+        return "Logged in as %s" % escape(session["username"])
+    else:
+        return "Not logged in"
+
+@app.route("/login", methods=["GET", "POST"])
+def login():
+    """
+    TODO: ENCRYPTED CONNECTION
+    Gets login data
+    :return: form to get data or redirect
+    """
+    if request.method == "POST":
+        session["username"] = request.form["username"]
+        return redirect(url_for("logged"))
+    return """
+    <form action="" method="post">
+        <p><input type=text name=username>
+        <p><input type=submit value=Login>
+    </form>
+    """
 #
 #
 #
