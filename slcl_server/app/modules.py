@@ -8,8 +8,8 @@ The goal of this file is to have here the functions app/__init__.py uses
 so that file can be read with no difficulties.
 """
 
-from app.config.constants import host, media_path, port, upload_folder
-from app.utils import clean_dir, get_config, get_permitted_formats, is_allowed,\
+from .config.constants import host, media_path, port, upload_folder
+from .utils import clean_dir, get_config, get_permitted_formats, is_allowed,\
     makedirs, nt
 
 from flask import url_for
@@ -202,7 +202,6 @@ def remove(path):
     """
 
     # todo: authentication
-
 
     if path[0] == '/':
         path = path[1:]

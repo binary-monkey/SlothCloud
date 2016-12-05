@@ -1,8 +1,9 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+
+from config.constants import static_path
 from os.path import join
-
 from OpenSSL import crypto
-
-from app.config.constants import static_path
 
 cert_file = "slcl.crt"
 key_file = "slcl.key"
