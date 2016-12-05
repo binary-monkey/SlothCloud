@@ -1,5 +1,6 @@
 .idea
 dist/
+SlothCloud.egg-info/
 __pycache__
 slcl_server/app/media/*
 !slcl_server/app/media/samples/
