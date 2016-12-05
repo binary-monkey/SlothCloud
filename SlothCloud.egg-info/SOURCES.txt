@@ -1,6 +1,0 @@
-setup.py
-SlothCloud.egg-info/PKG-INFO
-SlothCloud.egg-info/SOURCES.txt
-SlothCloud.egg-info/dependency_links.txt
-SlothCloud.egg-info/requires.txt
-SlothCloud.egg-info/top_level.txt
