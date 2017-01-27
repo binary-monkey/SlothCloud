@@ -4,6 +4,10 @@
   <head>
     <meta charset="UTF-8">
     <link rel="stylesheet" href="{{ url_for( 'css', filename='default.css' )}}">
+    {% if ftype == "video" %}
+      <link href="{{ url_for( 'css', filename='thirdparty/video-js.css' )}}" rel="stylesheet" type="text/css">
+      <script src="{{ url_for( 'js', path='thirdparty/video.min.js' )}}" type="application/javascript"></script>
+    {% endif %}
   </head>
 
   <body>
@@ -15,7 +19,7 @@
 
       {% if ftype == "video" %}
       <p>Video</p>
-      <video width="640" height="480" controls autoplay>
+      <video id="video" class="video-js vjs-default-skin" controls preload="none" width="640" height="480" controls autoplay>
           <source src="{{ url_for('view', path=path) }}" type="video/mp4">
       </video>
       {% else %}
@@ -27,7 +31,7 @@
     
           {% if ftype == "application" %}
           <h3><a href="{{ url_for('view', path=path) }}">
-            Download the pdf file by clicking here
+            Open the pdf file by clicking here
           </a></h3>
           {% else %}
             <script> window.document.title = 'hOI!!!'</script>

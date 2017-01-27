@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-from .config.constants import static_path
+from . import paths
 from os.path import join
 from OpenSSL import crypto
 
@@ -35,9 +35,9 @@ def create_self_signed_cert():
     cert.set_pubkey(k)
     cert.sign(k, 'sha1')
 
-    open(join(static_path, cert_file), "wt").write(
+    open(join(paths.static(), cert_file), "wt").write(
         crypto.dump_certificate(crypto.FILETYPE_PEM, cert).decode())
-    open(join(static_path, key_file), "wt").write(
+    open(join(paths.static(), key_file), "wt").write(
         crypto.dump_privatekey(crypto.FILETYPE_PEM, k).decode())
 
 

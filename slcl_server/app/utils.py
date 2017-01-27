@@ -3,7 +3,7 @@ Here we define functions required in modules.py but that are not called from
 app/__init__.py
 """
 
-from .config.constants import app_path, media_path
+from . import paths
 import json
 import os
 from shutil import rmtree
@@ -29,8 +29,7 @@ def get_config(json_filename):
     :return: dict of the json file
     """
     try:
-        with open(nt(app_path + "/config/" + json_filename + ".json"),
-                  'r') as file:
+        with open(paths.app("config/" + json_filename + ".json"), 'r') as file:
             return json.load(file)
     except FileNotFoundError:
         return {"error": "0"}
@@ -72,8 +71,8 @@ def makedirs(path, _prevpath=""):
     if '/' in path:
         dirlist = path.split("/")
         try:
-            os.mkdir(nt(media_path + "/" +
-                     str(_prevpath)  + secure_filename(dirlist[0])))
+            os.mkdir(paths.media("/" +
+                                str(_prevpath)  + secure_filename(dirlist[0])))
 
         except FileExistsError:
             pass
@@ -83,8 +82,7 @@ def makedirs(path, _prevpath=""):
                 _prevpath=_prevpath + ''.join(dirlist[0]))
     else:
         try:
-            os.mkdir(nt(media_path + "/" + _prevpath + '/'
-                        + secure_filename(path)))
+            os.mkdir(paths.media(_prevpath + '/' + secure_filename(path)))
         except Exception:
             return json.dumps({"error": "0"})
 

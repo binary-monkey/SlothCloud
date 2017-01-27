@@ -8,7 +8,8 @@ The goal of this file is to have here the functions app/__init__.py uses
 so that file can be read with no difficulties.
 """
 
-from .config.constants import host, media_path, port, upload_folder
+from . import paths
+from .config.constants import host, port, upload_folder
 from .utils import clean_dir, get_config, get_permitted_formats, is_allowed,\
     makedirs, nt
 
@@ -28,7 +29,7 @@ def absolute_list(path="", entries={}, file_types={}):
     :param file_types: supported file types
     :return: dictionary with files with files sorted in categories (audio, video..)
     """
-    scheme = get_scheme(media_path + nt(path), restricted=False)
+    scheme = get_scheme(paths.media(path), restricted=False)
     if not file_types:
         file_types = get_permitted_formats()
 
@@ -133,9 +134,9 @@ def get_index(path=""):
     rel_path = path if path else "media"
     rel_path = rel_path.join(["current path is: '", "'"])
     if not path:
-        path = media_path
+        path = paths.media()
     else:
-        path = media_path + nt('/' + path)
+        path = paths.media(path)
     if os.path.exists(path) and os.path.isdir(path):
         return json.dumps({rel_path: get_scheme(path,
                                 permitted_dirs=get_config("permissions")
@@ -210,7 +211,7 @@ def remove(path):
 
     if path[0] == '/':
         path = path[1:]
-    path = media_path + '/' + nt(path)
+    path = paths.media(path)
     print(path)
     try:
         if os.path.isfile(path):
@@ -233,7 +234,7 @@ def rename(old, new):
     """
     if old != "None" and new != "None":
 
-        if os.path.isfile(media_path + nt('/' + old)):
+        if os.path.isfile(paths.media(old)):
 
             if old.split(".")[-1].lower() == new.split(".")[
                 -1].lower() and len(
@@ -246,14 +247,14 @@ def rename(old, new):
                             [x + '/' for x in new.split('/')[0:-1]]))
 
                     os.rename(
-                        media_path + nt('/' + old),
-                        media_path + nt('/' + new)
+                        paths.media(old),
+                        paths.media(new)
                     )
-                    clean_dir(media_path)
+                    clean_dir(paths.media())
                     return ""
 
                 except Exception:
-                    clean_dir(media_path)
+                    clean_dir(paths.media())
                     # Unexpected error
                     return json.dumps({"error": "0"})
             else:

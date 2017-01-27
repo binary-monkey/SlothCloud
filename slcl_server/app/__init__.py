@@ -2,7 +2,8 @@
 # -*- coding: utf-8 -*-
 
 from . import modules
-from .config.constants import app_path, media_path
+from . import paths
+from .config.credentials import secret_key
 from .utils import makedirs as mkd
 from .utils import nt
 
@@ -14,7 +15,8 @@ from flask import session, url_for
 # from flask_autoindex import AutoIndex
 
 app = Flask(__name__)
-# AutoIndex(app, browse_root=media_path, add_url_rules=True)
+app.secret_key = secret_key
+# AutoIndex(app, browse_root=paths.media, add_url_rules=True)
 
 
 #
@@ -30,7 +32,7 @@ def logged():
     if "username" in session:
         return "Logged in as %s" % escape(session["username"])
     else:
-        return "Not logged in"
+        return redirect(url_for("login"))
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
@@ -60,7 +62,7 @@ def login():
 # Returns error codes and descriptions
 @app.route("/errors")
 def errors():
-    with open(app_path + nt("/config/errors.json"), 'r') as error_list:
+    with open(paths.app("/config/errors.json"), 'r') as error_list:
         return error_list.read()
 
 
@@ -127,13 +129,14 @@ def view(path):
     :return: requested file
     """
 
-    if path and os.path.isfile(nt(media_path + '/' + nt(path))):
-        return send_from_directory(nt(
+    if path and os.path.isfile(paths.media(path)):
+        return send_from_directory(
             # path to file folder
-            media_path + '/' + ''.join(
-                path.split('/')[0:-1]) if '/' in path else '') + '/',
-                                   # file
-                                   path.split('/')[-1])
+            paths.media(
+                ''.join(path.split('/')[0:-1]) if '/' in path else ''
+            ) + '/',
+            #file
+            path.split('/')[-1])
     else:
         return json.dumps({"error": "2"})
 
@@ -150,10 +153,10 @@ def view(path):
 @app.route("/css")
 def css():
     template = render_template(nt("css/" + request.args.get("filename")))
-    with open(app_path + "/templates/rendered/" + request.args.get("filename"),
+    with open(paths.app("templates/rendered/" + request.args.get("filename")),
               'w') as f:
         f.write(template)
-    return send_from_directory(app_path + "/templates/rendered",
+    return send_from_directory(paths.app("templates/rendered"),
                                filename=request.args.get("filename"))
 
 
@@ -167,7 +170,7 @@ def display(file):
     :return: html template with file
     """
     file = nt(file)
-    with open(nt(app_path + "/config/permissions.json"), "r") as format_file:
+    with open(paths.app("config/permissions.json"), "r") as format_file:
         file_formats = json.load(format_file)["formats"]
 
     for file_type in file_formats:
@@ -187,7 +190,7 @@ def favicon():
 
 @app.route("/fonts")
 def fonts():
-    return send_from_directory(app_path + nt("/templates/fonts"),
+    return send_from_directory(paths.app("/templates/fonts"),
                                request.args.get("filename"))
 
 
@@ -230,7 +233,7 @@ def menu():
 @app.route("/static")
 def get_static():
     return send_from_directory(
-        app_path + nt('static/' + request.args.get("filename")))
+        paths.app('static/' + request.args.get("filename")))
 
 
 @app.route("/templates/<path:path>")
