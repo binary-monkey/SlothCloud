@@ -1,3 +1,6 @@
+# Important Note
+This project has been scraped and will shortly be built again from scratch.
+
 # SlothCloud
 SlothCloud is a RESTful server for storing and sharing media files made using Flask for Python3 
 
